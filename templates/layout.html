@@ -1,33 +1,50 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Quill WYSIWYG -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{ site_title }} | Makeup • Hair • Academy</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Core Styles -->
+  <link rel="stylesheet" href="/static/css/theme.css">
+
+  <!-- Quill WYSIWYG -->
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
 
-  <!-- SortableJS (drag & drop) -->
+  <!-- SortableJS -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ site_title }}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/css/theme.css">
 </head>
 <body class="theme-root">
-  <header class="topbar">
-    <div class="brand">
-      <h1 id="site-title">{{ site_title }}</h1>
-      <p class="tag" id="site-tagline">{{ tagline }}</p>
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="branding">
+        <h1 id="site-title">{{ site_title }}</h1>
+        <p id="site-tagline">{{ tagline }}</p>
+      </div>
+      <div class="header-contact">
+        <span>📞 Call/WhatsApp: <strong>9532472334</strong></span>
+        <span>📧 <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></span>
+      </div>
     </div>
-    <div class="contact">Call/WhatsApp: <strong>9532472334</strong> | Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></div>
+
+    <nav class="main-nav">
+      <a href="/">Home</a>
+      <a href="/portfolio">Portfolio</a>
+      <a href="/prices">Prices</a>
+      <a href="/contact">Contact</a>
+    </nav>
   </header>
 
-  <!-- gallery strip visible on top of all pages -->
-  <div class="gallery-strip" id="gallery-strip">
+  <!-- GALLERY STRIP -->
+  <div class="gallery-strip">
     {% for g in gallery %}
       <div class="g-item">
-        {% if g['type']=='video' %}
+        {% if g['type'] == 'video' %}
           <a class="video-link" href="/uploads/{{ g['filename'] }}" target="_blank">▶ Video</a>
         {% else %}
           <img src="/uploads/{{ g['filename'] }}" alt="">
@@ -36,51 +53,53 @@
     {% endfor %}
   </div>
 
-  <nav class="main-nav">
-    <a href="/portfolio">Portfolio</a>
-    <a href="/prices">Prices</a>
-    <a href="/contact">Contact</a>
-  </nav>
-
-  <main class="container">
+  <!-- MAIN CONTENT -->
+  <main class="page-container">
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="footer">
-    <div>© {{ (2025) }} {{ site_title }} — Designed by Laiba Irfan</div>
-    <div class="footer-links">Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></div>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div>© 2025 {{ site_title }} — Crafted with 💄 by Laiba Irfan</div>
+      <div>
+        <a href="https://www.instagram.com/glambylaiba_01" target="_blank">Instagram @glambylaiba_01</a>
+      </div>
+    </div>
   </footer>
 
-  <!-- hidden admin dot -->
-  <div id="admin-dot" onclick="openAdmin()" title="Admin"></div>
+  <!-- ADMIN ACCESS BUTTON -->
+  <div id="admin-dot" title="Admin" onclick="openAdmin()"></div>
 
-  <!-- admin modal -->
+  <!-- ADMIN MODAL -->
   <div id="admin-modal" class="modal">
     <div class="modal-box">
+      <!-- LOGIN -->
       <div id="admin-login">
-        <input id="admin-password" placeholder="Password" type="password" />
+        <input id="admin-password" type="password" placeholder="Enter Admin Password">
         <button onclick="doLogin()">Login</button>
-        <div id="login-error" class="error"></div>
+        <p id="login-error" class="error-msg"></p>
       </div>
 
+      <!-- DASHBOARD -->
       <div id="admin-panel" style="display:none;">
-        <h3>Admin Panel</h3>
+        <h3>Admin Dashboard</h3>
 
         <section class="admin-section">
-          <h4>Site Settings</h4>
-          <label>Site title</label><input id="site-title-input" placeholder="Site title">
-          <label>Tagline</label><input id="tagline-input" placeholder="Tagline">
+          <h4>🌐 Site Settings</h4>
+          <label>Title</label><input id="site-title-input">
+          <label>Tagline</label><input id="tagline-input">
           <label>Theme</label>
           <select id="theme-select">
             <option value="pink">Soft Pink • Gold</option>
             <option value="black">Black • Gold</option>
             <option value="white">White • Beige</option>
           </select>
-          <button onclick="saveSettings()">Save Settings</button>
+          <button onclick="saveSettings()">💾 Save Settings</button>
         </section>
 
         <section class="admin-section">
-          <h4>Gallery</h4>
+          <h4>📸 Gallery</h4>
           <input type="file" id="file-input">
           <select id="ftype"><option value="photo">Photo</option><option value="video">Video</option></select>
           <input id="cat" placeholder="Category (e.g. Bridal)">
@@ -89,22 +108,29 @@
         </section>
 
         <section class="admin-section">
-          <h4>Prices (visual editor)</h4>
+          <h4>💰 Prices (Visual Editor)</h4>
           <div id="prices-editor"></div>
           <button onclick="savePricesVisual()">Save Prices</button>
         </section>
 
         <section class="admin-section">
-          <h4>Reviews</h4>
+          <h4>💬 Reviews</h4>
           <form id="reviewForm" onsubmit="addReview(event)">
-            <input name="name" placeholder="Reviewer name"><br>
-            <textarea name="text" placeholder="Review text"></textarea><br>
-            <input type="file" name="image"><br>
+            <input name="name" placeholder="Name">
+            <textarea name="text" placeholder="Review"></textarea>
+            <input type="file" name="image">
             <button type="submit">Add Review</button>
           </form>
         </section>
 
-        <button onclick="closeAdmin()">Close</button>
+        <section class="admin-section">
+          <h4>📝 Descriptions (WYSIWYG)</h4>
+          <label>Home</label><div id="quill-home" class="quill-box"></div>
+          <label>Portfolio</label><div id="quill-portfolio" class="quill-box"></div>
+          <label>Prices</label><div id="quill-prices" class="quill-box"></div>
+        </section>
+
+        <button class="close-btn" onclick="closeAdmin()">Close Admin</button>
       </div>
     </div>
   </div>
