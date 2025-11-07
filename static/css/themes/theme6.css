@@ -1,0 +1,8 @@
+/* theme6.css — Floating sidebar nav */
+body.theme6{font-family:"Poppins",sans-serif;display:flex;min-height:100vh}
+.sidebar{width:240px;background:#fff;padding:20px;border-right:1px solid #f0e9eb;position:fixed;height:100%}
+.page-container{margin-left:260px;flex:1;padding:28px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g-item img{height:220px;object-fit:cover;border-radius:8px}
+.hero-section{padding:28px}
+@media(max-width:900px){.sidebar{display:none}.page-container{margin-left:0}}
