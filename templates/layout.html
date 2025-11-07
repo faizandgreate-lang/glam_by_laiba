@@ -7,25 +7,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/theme.css">
 </head>
-<body style="background: {{ bg_color }};">
+<body class="theme-root">
   <header class="topbar">
     <div class="brand">
-      <h1>{{ site_title }}</h1>
-      <p class="tag">{{ tagline }}</p>
+      <h1 id="site-title">{{ site_title }}</h1>
+      <p class="tag" id="site-tagline">{{ tagline }}</p>
     </div>
-    <div class="contact">Call/WhatsApp: 9532472334 | Email: workwithlaiba24@gmail.com</div>
+    <div class="contact">Call/WhatsApp: <strong>9532472334</strong> | Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></div>
   </header>
 
-  <!-- gallery strip visible on top of pages -->
-  <div class="gallery-strip">
+  <!-- gallery strip visible on top of all pages -->
+  <div class="gallery-strip" id="gallery-strip">
     {% for g in gallery %}
-      {% if g['type']=='video' %}
-        <div class="g-item">
-          <a href="/uploads/{{ g['filename'] }}" target="_blank">▶ Video</a>
-        </div>
-      {% else %}
-        <div class="g-item"><img src="/uploads/{{ g['filename'] }}" alt=""></div>
-      {% endif %}
+      <div class="g-item">
+        {% if g['type']=='video' %}
+          <a class="video-link" href="/uploads/{{ g['filename'] }}" target="_blank">▶ Video</a>
+        {% else %}
+          <img src="/uploads/{{ g['filename'] }}" alt="">
+        {% endif %}
+      </div>
     {% endfor %}
   </div>
 
@@ -40,13 +40,14 @@
   </main>
 
   <footer class="footer">
-    <div>© 2025 {{ site_title }} — Designed by Laiba Irfan</div>
+    <div>© {{ (2025) }} {{ site_title }} — Designed by Laiba Irfan</div>
+    <div class="footer-links">Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></div>
   </footer>
 
   <!-- hidden admin dot -->
   <div id="admin-dot" onclick="openAdmin()" title="Admin"></div>
 
-  <!-- admin modal and client scripts -->
+  <!-- admin modal -->
   <div id="admin-modal" class="modal">
     <div class="modal-box">
       <div id="admin-login">
@@ -54,30 +55,48 @@
         <button onclick="doLogin()">Login</button>
         <div id="login-error" class="error"></div>
       </div>
+
       <div id="admin-panel" style="display:none;">
-        <h3>Admin</h3>
-        <label>Site title</label><input id="site-title-input"><br>
-        <label>Tagline</label><input id="tagline-input"><br>
-        <label>Background color</label><input id="bg-input" type="color"><br>
-        <button onclick="saveSettings()">Save Settings</button>
-        <hr>
-        <h4>Upload Photo / Video</h4>
-        <input type="file" id="file-input"><br>
-        <select id="ftype"><option value="photo">Photo</option><option value="video">Video</option></select>
-        <input id="cat" placeholder="Category"><button onclick="uploadFile()">Upload</button>
-        <hr>
-        <h4>Edit Prices</h4>
-        <textarea id="prices-json" rows=8 style="width:100%"></textarea>
-        <button onclick="savePrices()">Save Prices</button>
-        <hr>
-        <h4>Reviews</h4>
-        <form id="reviewForm" onsubmit="addReview(event)">
-          <input name="name" placeholder="Name"><br>
-          <textarea name="text" placeholder="Review"></textarea><br>
-          <input type="file" name="image"><br>
-          <button type="submit">Add Review</button>
-        </form>
-        <div id="admin-gallery"></div>
+        <h3>Admin Panel</h3>
+
+        <section class="admin-section">
+          <h4>Site Settings</h4>
+          <label>Site title</label><input id="site-title-input" placeholder="Site title">
+          <label>Tagline</label><input id="tagline-input" placeholder="Tagline">
+          <label>Theme</label>
+          <select id="theme-select">
+            <option value="pink">Soft Pink • Gold</option>
+            <option value="black">Black • Gold</option>
+            <option value="white">White • Beige</option>
+          </select>
+          <button onclick="saveSettings()">Save Settings</button>
+        </section>
+
+        <section class="admin-section">
+          <h4>Gallery</h4>
+          <input type="file" id="file-input">
+          <select id="ftype"><option value="photo">Photo</option><option value="video">Video</option></select>
+          <input id="cat" placeholder="Category (e.g. Bridal)">
+          <button onclick="uploadFile()">Upload</button>
+          <div id="admin-gallery"></div>
+        </section>
+
+        <section class="admin-section">
+          <h4>Prices (visual editor)</h4>
+          <div id="prices-editor"></div>
+          <button onclick="savePricesVisual()">Save Prices</button>
+        </section>
+
+        <section class="admin-section">
+          <h4>Reviews</h4>
+          <form id="reviewForm" onsubmit="addReview(event)">
+            <input name="name" placeholder="Reviewer name"><br>
+            <textarea name="text" placeholder="Review text"></textarea><br>
+            <input type="file" name="image"><br>
+            <button type="submit">Add Review</button>
+          </form>
+        </section>
+
         <button onclick="closeAdmin()">Close</button>
       </div>
     </div>
