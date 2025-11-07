@@ -31,6 +31,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(DB_PATH.parent, exist_ok=True)
 
 app = Flask(__name__)
+init_db_if_missing()
+
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
 app.config['MAX_CONTENT_LENGTH'] = 200 * 1024 * 1024  # 200MB total safety per upload
 
