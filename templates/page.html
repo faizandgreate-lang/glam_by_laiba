@@ -1,14 +1,38 @@
 {% extends "layout.html" %}
 {% block content %}
-  {% if page=='portfolio' or page=='home' %}
+  {% if page=='home' %}
     <section class="hero">
-      <h2>Portfolio</h2>
-      <p>Edit this description from Admin</p>
+      <div class="hero-content">
+        <h2>Welcome to {{ site_title }}</h2>
+        <p id="home-desc">Edit this description from Admin - showcase Laiba's experience and services.</p>
+      </div>
+    </section>
+    <!-- show a preview of portfolio on home -->
+    <section class="portfolio-preview">
+      <h3>Selected Looks</h3>
       <div class="cards">
         {% for g in gallery %}
           <div class="card">
             {% if g['type']=='video' %}
-              <video controls src="/uploads/{{ g['filename'] }}" preload="none"></video>
+              <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
+            {% else %}
+              <img src="/uploads/{{ g['filename'] }}" alt="">
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if page=='portfolio' %}
+    <section class="portfolio-full">
+      <h2>Portfolio</h2>
+      <p id="portfolio-desc">All work is editable from admin.</p>
+      <div class="cards">
+        {% for g in gallery %}
+          <div class="card">
+            {% if g['type']=='video' %}
+              <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
             {% else %}
               <img src="/uploads/{{ g['filename'] }}" alt="">
             {% endif %}
@@ -19,7 +43,7 @@
   {% endif %}
 
   {% if page=='prices' %}
-    <section>
+    <section class="prices-section">
       <h2>Our Prices</h2>
       <div class="prices-grid">
         {% for cat, items in prices.items() %}
@@ -46,9 +70,10 @@
   {% endif %}
 
   {% if page=='contact' %}
-    <section>
+    <section class="contact-section">
       <h2>Contact</h2>
-      <p>Call/WhatsApp: 9532472334 | Email: workwithlaiba24@gmail.com</p>
+      <p>Call/WhatsApp: <strong>9532472334</strong></p>
+      <p>Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></p>
       <p>Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
     </section>
   {% endif %}
