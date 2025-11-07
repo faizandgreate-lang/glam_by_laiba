@@ -1,80 +1,199 @@
 {% extends "layout.html" %}
 {% block content %}
-  {% if page=='home' %}
-    <section class="hero">
-      <div class="hero-content">
-        <h2>Welcome to {{ site_title }}</h2>
-        <p id="home-desc">Edit this description from Admin - showcase Laiba's experience and services.</p>
+<style>
+  body {
+    background-color: {{ bg_color }};
+    font-family: "Poppins", sans-serif;
+    color: #2a2a2a;
+  }
+
+  section {
+    padding: 60px 8%;
+    text-align: center;
+  }
+
+  h2, h3 {
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .hero {
+    background: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,192,203,0.3));
+    padding: 120px 8%;
+  }
+
+  .hero h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #d63384;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    margin-top: 10px;
+    color: #444;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+  }
+
+  .card img, .card video {
+    width: 100%;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .prices-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 40px;
+  }
+
+  .price-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    padding: 25px;
+    width: 280px;
+    transition: all 0.3s ease;
+  }
+
+  .price-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 1rem;
+  }
+
+  .reviews {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .review {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+
+  .review img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+  }
+
+  .contact-section a {
+    color: #d63384;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .contact-section a:hover {
+    text-decoration: underline;
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    color: #666;
+  }
+</style>
+
+<!-- 🌸 Common Gallery Header (on every page) -->
+<section class="gallery-top">
+  <h3>✨ Our Work ✨</h3>
+  <div class="cards">
+    {% for g in gallery %}
+      <div class="card">
+        {% if g['type']=='video' %}
+          <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
+        {% else %}
+          <img src="/uploads/{{ g['filename'] }}" alt="">
+        {% endif %}
       </div>
-    </section>
-    <!-- show a preview of portfolio on home -->
-    <section class="portfolio-preview">
-      <h3>Selected Looks</h3>
-      <div class="cards">
-        {% for g in gallery %}
-          <div class="card">
-            {% if g['type']=='video' %}
-              <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
-            {% else %}
-              <img src="/uploads/{{ g['filename'] }}" alt="">
-            {% endif %}
-          </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% if page=='home' %}
+<section class="hero">
+  <div class="hero-content">
+    <h2>{{ site_title }}</h2>
+    <p>{{ tagline }}</p>
+    <div id="home-desc" class="rich-text">
+      {{ (settings.get('home_desc')|safe) if settings and settings.get('home_desc') else "<p>Edit this section from Admin.</p>" }}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if page=='portfolio' %}
+<section class="portfolio-full">
+  <h2>Our Portfolio</h2>
+  <div id="portfolio-desc" class="rich-text">
+    {{ (settings.get('portfolio_desc')|safe) if settings and settings.get('portfolio_desc') else "<p>Edit portfolio description from Admin.</p>" }}
+  </div>
+</section>
+{% endif %}
+
+{% if page=='prices' %}
+<section class="prices-section">
+  <h2>Our Packages</h2>
+  <div id="prices-desc" class="rich-text">
+    {{ (settings.get('prices_desc')|safe) if settings and settings.get('prices_desc') else "<p>Update service descriptions from Admin.</p>" }}
+  </div>
+
+  <div class="prices-grid">
+    {% for cat, items in prices.items() %}
+      <div class="price-card">
+        <h3>{{ cat }}</h3>
+        {% for k,v in items.items() %}
+          <div class="price-row"><span>{{ k }}</span><span>{{ v }}</span></div>
         {% endfor %}
       </div>
-    </section>
-  {% endif %}
+    {% endfor %}
+  </div>
 
-  {% if page=='portfolio' %}
-    <section class="portfolio-full">
-      <h2>Portfolio</h2>
-      <p id="portfolio-desc">All work is editable from admin.</p>
-      <div class="cards">
-        {% for g in gallery %}
-          <div class="card">
-            {% if g['type']=='video' %}
-              <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
-            {% else %}
-              <img src="/uploads/{{ g['filename'] }}" alt="">
-            {% endif %}
-          </div>
-        {% endfor %}
+  <h3 style="margin-top:60px;">Client Reviews</h3>
+  <div class="reviews">
+    {% for r in reviews %}
+      <div class="review">
+        {% if r['image'] %}
+          <img src="/uploads/{{ r['image'] }}" alt="">
+        {% endif %}
+        <strong>{{ r['name'] }}</strong>
+        <p>{{ r['text'] }}</p>
       </div>
-    </section>
-  {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
 
-  {% if page=='prices' %}
-    <section class="prices-section">
-      <h2>Our Prices</h2>
-      <div class="prices-grid">
-        {% for cat, items in prices.items() %}
-          <div class="price-card">
-            <h3>{{ cat }}</h3>
-            {% for k,v in items.items() %}
-              <div class="price-row"><span>{{ k }}</span><span>{{ v }}</span></div>
-            {% endfor %}
-          </div>
-        {% endfor %}
-      </div>
+{% if page=='contact' %}
+<section class="contact-section">
+  <h2>Contact Us</h2>
+  <p>📞 Call/WhatsApp: <strong>9532472334</strong></p>
+  <p>📧 Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></p>
+  <p>📸 Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
+</section>
+{% endif %}
 
-      <h3>Reviews</h3>
-      <div class="reviews">
-        {% for r in reviews %}
-          <div class="review">
-            {% if r['image'] %}<img src="/uploads/{{ r['image'] }}" alt="">{% endif %}
-            <strong>{{ r['name'] }}</strong>
-            <p>{{ r['text'] }}</p>
-          </div>
-        {% endfor %}
-      </div>
-    </section>
-  {% endif %}
-
-  {% if page=='contact' %}
-    <section class="contact-section">
-      <h2>Contact</h2>
-      <p>Call/WhatsApp: <strong>9532472334</strong></p>
-      <p>Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></p>
-      <p>Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
-    </section>
-  {% endif %}
+<footer>
+  COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖
+</footer>
 {% endblock %}
