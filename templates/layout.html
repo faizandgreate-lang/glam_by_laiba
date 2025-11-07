@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ site_title }}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/theme.css">
+</head>
+<body style="background: {{ bg_color }};">
+  <header class="topbar">
+    <div class="brand">
+      <h1>{{ site_title }}</h1>
+      <p class="tag">{{ tagline }}</p>
+    </div>
+    <div class="contact">Call/WhatsApp: 9532472334 | Email: workwithlaiba24@gmail.com</div>
+  </header>
+
+  <!-- gallery strip visible on top of pages -->
+  <div class="gallery-strip">
+    {% for g in gallery %}
+      {% if g['type']=='video' %}
+        <div class="g-item">
+          <a href="/uploads/{{ g['filename'] }}" target="_blank">▶ Video</a>
+        </div>
+      {% else %}
+        <div class="g-item"><img src="/uploads/{{ g['filename'] }}" alt=""></div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <nav class="main-nav">
+    <a href="/portfolio">Portfolio</a>
+    <a href="/prices">Prices</a>
+    <a href="/contact">Contact</a>
+  </nav>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div>© 2025 {{ site_title }} — Designed by Laiba Irfan</div>
+  </footer>
+
+  <!-- hidden admin dot -->
+  <div id="admin-dot" onclick="openAdmin()" title="Admin"></div>
+
+  <!-- admin modal and client scripts -->
+  <div id="admin-modal" class="modal">
+    <div class="modal-box">
+      <div id="admin-login">
+        <input id="admin-password" placeholder="Password" type="password" />
+        <button onclick="doLogin()">Login</button>
+        <div id="login-error" class="error"></div>
+      </div>
+      <div id="admin-panel" style="display:none;">
+        <h3>Admin</h3>
+        <label>Site title</label><input id="site-title-input"><br>
+        <label>Tagline</label><input id="tagline-input"><br>
+        <label>Background color</label><input id="bg-input" type="color"><br>
+        <button onclick="saveSettings()">Save Settings</button>
+        <hr>
+        <h4>Upload Photo / Video</h4>
+        <input type="file" id="file-input"><br>
+        <select id="ftype"><option value="photo">Photo</option><option value="video">Video</option></select>
+        <input id="cat" placeholder="Category"><button onclick="uploadFile()">Upload</button>
+        <hr>
+        <h4>Edit Prices</h4>
+        <textarea id="prices-json" rows=8 style="width:100%"></textarea>
+        <button onclick="savePrices()">Save Prices</button>
+        <hr>
+        <h4>Reviews</h4>
+        <form id="reviewForm" onsubmit="addReview(event)">
+          <input name="name" placeholder="Name"><br>
+          <textarea name="text" placeholder="Review"></textarea><br>
+          <input type="file" name="image"><br>
+          <button type="submit">Add Review</button>
+        </form>
+        <div id="admin-gallery"></div>
+        <button onclick="closeAdmin()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>
