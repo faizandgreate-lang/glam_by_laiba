@@ -1,4 +1,3 @@
-# Replace your app.py with this exact file
 from flask import Flask, render_template, request, jsonify, send_from_directory
 import sqlite3, os, json
 from werkzeug.utils import secure_filename
@@ -15,8 +14,13 @@ ADMIN_PASSWORD = '1234'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(INSTANCE_DIR, exist_ok=True)
 
-def init_db_if_missing():
+def get_db():
     conn = sqlite3.connect(str(DB_PATH))
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_db_if_missing():
+    conn = get_db()
     cur = conn.cursor()
     # settings
     cur.execute("""
@@ -32,6 +36,7 @@ def init_db_if_missing():
             filename TEXT,
             type TEXT,
             category TEXT DEFAULT 'General',
+            position INTEGER DEFAULT 0,
             uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
@@ -74,10 +79,6 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
 app.config['MAX_CONTENT_LENGTH'] = 300 * 1024 * 1024  # 300MB safety
 
-def get_db():
-    conn = sqlite3.connect(str(DB_PATH))
-    conn.row_factory = sqlite3.Row
-    return conn
 
 # --- Public pages (gallery top on all pages) ---
 @app.route('/')
@@ -86,7 +87,7 @@ def home():
     site_title = conn.execute("SELECT value FROM settings WHERE key='site_title'").fetchone()['value']
     tagline = conn.execute("SELECT value FROM settings WHERE key='tagline'").fetchone()['value']
     bg_color = conn.execute("SELECT value FROM settings WHERE key='bg_color'").fetchone()['value']
-    gallery = conn.execute("SELECT * FROM photos ORDER BY uploaded_at DESC").fetchall()
+    gallery = conn.execute("SELECT * FROM photos ORDER BY position ASC, uploaded_at DESC").fetchall()
     prices_row = conn.execute("SELECT data FROM prices WHERE id=1").fetchone()
     prices = json.loads(prices_row['data']) if prices_row else {}
     reviews = conn.execute("SELECT * FROM reviews ORDER BY posted_at DESC").fetchall()
@@ -101,7 +102,7 @@ def portfolio():
     site_title = conn.execute("SELECT value FROM settings WHERE key='site_title'").fetchone()['value']
     tagline = conn.execute("SELECT value FROM settings WHERE key='tagline'").fetchone()['value']
     bg_color = conn.execute("SELECT value FROM settings WHERE key='bg_color'").fetchone()['value']
-    gallery = conn.execute("SELECT * FROM photos ORDER BY uploaded_at DESC").fetchall()
+    gallery = conn.execute("SELECT * FROM photos ORDER BY position ASC, uploaded_at DESC").fetchall()
     conn.close()
     return render_template('page.html',
                            site_title=site_title, tagline=tagline, bg_color=bg_color,
@@ -113,7 +114,7 @@ def prices():
     site_title = conn.execute("SELECT value FROM settings WHERE key='site_title'").fetchone()['value']
     tagline = conn.execute("SELECT value FROM settings WHERE key='tagline'").fetchone()['value']
     bg_color = conn.execute("SELECT value FROM settings WHERE key='bg_color'").fetchone()['value']
-    gallery = conn.execute("SELECT * FROM photos ORDER BY uploaded_at DESC").fetchall()
+    gallery = conn.execute("SELECT * FROM photos ORDER BY position ASC, uploaded_at DESC").fetchall()
     prices_row = conn.execute("SELECT data FROM prices WHERE id=1").fetchone()
     prices = json.loads(prices_row['data']) if prices_row else {}
     reviews = conn.execute("SELECT * FROM reviews ORDER BY posted_at DESC").fetchall()
@@ -128,19 +129,19 @@ def contact():
     site_title = conn.execute("SELECT value FROM settings WHERE key='site_title'").fetchone()['value']
     tagline = conn.execute("SELECT value FROM settings WHERE key='tagline'").fetchone()['value']
     bg_color = conn.execute("SELECT value FROM settings WHERE key='bg_color'").fetchone()['value']
-    gallery = conn.execute("SELECT * FROM photos ORDER BY uploaded_at DESC").fetchall()
+    gallery = conn.execute("SELECT * FROM photos ORDER BY position ASC, uploaded_at DESC").fetchall()
     conn.close()
     return render_template('page.html',
                            site_title=site_title, tagline=tagline, bg_color=bg_color,
                            gallery=gallery, page='contact')
 
-# --- Admin API: login (used by hidden button) ---
+
+# --- Admin API ---
 @app.route('/api/login', methods=['POST'])
 def api_login():
     data = request.get_json() or {}
     return jsonify({'ok': data.get('password','') == ADMIN_PASSWORD})
 
-# --- Admin API: update settings (title/tagline/bg_color) ---
 @app.route('/api/settings', methods=['POST'])
 def api_settings():
     data = request.get_json() or {}
@@ -152,7 +153,34 @@ def api_settings():
     conn.commit(); conn.close()
     return jsonify({'ok': True})
 
-# --- Admin API: update prices JSON ---
+@app.route('/api/get_settings')
+def api_get_settings():
+    conn = get_db()
+    s = {}
+    for key in ('site_title','tagline','bg_color'):
+        row = conn.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
+        s[key]= row['value'] if row else ''
+    prices_row = conn.execute("SELECT data FROM prices WHERE id=1").fetchone()
+    s['prices'] = json.loads(prices_row['data']) if prices_row else {}
+    gallery = conn.execute("SELECT id, filename, type, category FROM photos ORDER BY position ASC, uploaded_at DESC").fetchall()
+    s['gallery'] = [dict(id=r['id'], filename=r['filename'], type=r['type'], category=r['category']) for r in gallery]
+    conn.close()
+    return jsonify(s)
+
+
+@app.route('/api/reorder', methods=['POST'])
+def api_reorder():
+    data = request.get_json() or {}
+    order = data.get('order', [])
+    if not isinstance(order, list):
+        return jsonify({'ok': False, 'error': 'invalid order'}), 400
+    conn = get_db()
+    for pos, pid in enumerate(order):
+        conn.execute("UPDATE photos SET position=? WHERE id=?", (pos, pid))
+    conn.commit(); conn.close()
+    return jsonify({'ok': True})
+
+
 @app.route('/api/prices', methods=['POST'])
 def api_update_prices():
     data = request.get_json() or {}
@@ -161,7 +189,8 @@ def api_update_prices():
     conn.commit(); conn.close()
     return jsonify({'ok': True})
 
-# --- Admin API: reviews CRUD ---
+
+# --- Reviews ---
 @app.route('/api/review', methods=['POST'])
 def api_add_review():
     data = request.form or {}
@@ -173,11 +202,14 @@ def api_add_review():
         if f and f.filename:
             filename = secure_filename(f.filename)
             save_path = Path(app.config['UPLOAD_FOLDER']) / filename
-            base, dot, extpart = filename.rpartition('.'); counter=1
+            base, dot, extpart = filename.rpartition('.')
+            counter = 1
             while save_path.exists():
                 filename = f"{base}_{counter}.{extpart}"
-                save_path = Path(app.config['UPLOAD_FOLDER']) / filename; counter+=1
-            f.save(str(save_path)); image = filename
+                save_path = Path(app.config['UPLOAD_FOLDER']) / filename
+                counter += 1
+            f.save(str(save_path))
+            image = filename
     conn = get_db()
     conn.execute("INSERT INTO reviews (name, text, image) VALUES (?, ?, ?)", (name, text, image))
     conn.commit(); conn.close()
@@ -188,12 +220,14 @@ def api_delete_review(rid):
     conn = get_db()
     row = conn.execute("SELECT image FROM reviews WHERE id=?", (rid,)).fetchone()
     if row and row['image']:
-        p = Path(app.config['UPLOAD_FOLDER']) / row['image']; p.unlink(missing_ok=True)
+        p = Path(app.config['UPLOAD_FOLDER']) / row['image']
+        p.unlink(missing_ok=True)
     conn.execute("DELETE FROM reviews WHERE id=?", (rid,))
     conn.commit(); conn.close()
     return jsonify({'ok': True})
 
-# --- Upload / delete photos (gallery) ---
+
+# --- Gallery upload/delete ---
 @app.route('/api/upload', methods=['POST'])
 def api_upload():
     if 'file' not in request.files:
@@ -208,10 +242,12 @@ def api_upload():
     if ext not in ALLOWED_IM_EXT:
         return jsonify({'ok': False, 'error': 'Invalid file type'})
     save_path = Path(app.config['UPLOAD_FOLDER']) / filename
-    base, dot, extpart = filename.rpartition('.'); counter=1
+    base, dot, extpart = filename.rpartition('.')
+    counter = 1
     while save_path.exists():
         filename = f"{base}_{counter}.{extpart}"
-        save_path = Path(app.config['UPLOAD_FOLDER']) / filename; counter+=1
+        save_path = Path(app.config['UPLOAD_FOLDER']) / filename
+        counter += 1
     f.save(str(save_path))
     conn = get_db()
     cur = conn.execute("INSERT INTO photos (filename, type, category) VALUES (?, ?, ?)", (filename, ftype, category))
@@ -224,8 +260,11 @@ def api_delete_photo(pid):
     row = conn.execute("SELECT filename FROM photos WHERE id=?", (pid,)).fetchone()
     if not row:
         conn.close(); return jsonify({'ok': False, 'error': 'Not found'})
-    fn = row['filename']; conn.execute("DELETE FROM photos WHERE id=?", (pid,)); conn.commit(); conn.close()
-    p = Path(app.config['UPLOAD_FOLDER']) / fn; p.unlink(missing_ok=True)
+    fn = row['filename']
+    conn.execute("DELETE FROM photos WHERE id=?", (pid,))
+    conn.commit(); conn.close()
+    p = Path(app.config['UPLOAD_FOLDER']) / fn
+    p.unlink(missing_ok=True)
     return jsonify({'ok': True})
 
 # serve uploads
@@ -233,46 +272,6 @@ def api_delete_photo(pid):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
-@app.route('/api/get_settings')
-def api_get_settings():
-    conn = get_db()
-    s = {}
-    for key in ('site_title','tagline','bg_color'):
-        row = conn.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()
-        s[key]= row['value'] if row else ''
-    prices_row = conn.execute("SELECT data FROM prices WHERE id=1").fetchone()
-    s['prices'] = json.loads(prices_row['data']) if prices_row else {}
-    gallery = conn.execute("SELECT id, filename, type, category FROM photos ORDER BY uploaded_at DESC").fetchall()
-    s['gallery'] = [dict(id=r['id'], filename=r['filename'], type=r['type'], category=r['category']) for r in gallery]
-    conn.close()
-    return jsonify(s)
-
-@app.route('/api/gallery')
-def api_gallery():
-    conn = get_db()
-    gallery = conn.execute("SELECT id, filename, type, category FROM photos ORDER BY uploaded_at DESC").fetchall()
-    conn.close()
-    return jsonify([dict(id=r['id'], filename=r['filename'], type=r['type'], category=r['category']) for r in gallery])
-    
-    @app.route('/api/reorder', methods=['POST'])
-def api_reorder():
-    """
-    Expects JSON: {"order": [id1, id2, id3, ...]}
-    Updates 'position' for photos so gallery displays in that order.
-    """
-    try:
-        data = request.get_json() or {}
-        order = data.get('order', [])
-        if not isinstance(order, list):
-            return jsonify({'ok': False, 'error': 'invalid order'}), 400
-        conn = get_db()
-        for pos, pid in enumerate(order):
-            conn.execute("UPDATE photos SET position=? WHERE id=?", (pos, pid))
-        conn.commit(); conn.close()
-        return jsonify({'ok': True})
-    except Exception as e:
-        log_error(e)
-        return jsonify({'ok': False, 'error': 'reorder failed'}), 500
-
