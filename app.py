@@ -272,6 +272,40 @@ def api_delete_photo(pid):
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# ----------------------
+# Generic content saver
+# ----------------------
+@app.route('/api/save_content', methods=['POST'])
+def api_save_content():
+    """
+    Save arbitrary key/value pairs into settings table.
+    Expects JSON: {"key": "...", "value": "..."} OR multiple keys: {"k1":"v1", "k2":"v2"}
+    """
+    try:
+        data = request.get_json() or {}
+        if not data:
+            return jsonify({'ok': False, 'error': 'no data'}), 400
+        conn = get_db()
+        # allow either single (key,value) or multiple keys
+        if 'key' in data and 'value' in data and len(data)==2:
+            conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (data['key'], data['value']))
+        else:
+            for k, v in data.items():
+                # convert non-string to JSON string if needed
+                if isinstance(v, (dict, list)):
+                    v = json.dumps(v)
+                conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (k, str(v)))
+        conn.commit()
+        conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        # simple logging
+        try:
+            with open(INSTANCE_DIR / 'error_save_content.log', 'a', encoding='utf-8') as f:
+                f.write(str(e) + '\n')
+        except:
+            pass
+        return jsonify({'ok': False, 'error': 'save failed'}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)
