@@ -255,3 +255,24 @@ def api_gallery():
     gallery = conn.execute("SELECT id, filename, type, category FROM photos ORDER BY uploaded_at DESC").fetchall()
     conn.close()
     return jsonify([dict(id=r['id'], filename=r['filename'], type=r['type'], category=r['category']) for r in gallery])
+    
+    @app.route('/api/reorder', methods=['POST'])
+def api_reorder():
+    """
+    Expects JSON: {"order": [id1, id2, id3, ...]}
+    Updates 'position' for photos so gallery displays in that order.
+    """
+    try:
+        data = request.get_json() or {}
+        order = data.get('order', [])
+        if not isinstance(order, list):
+            return jsonify({'ok': False, 'error': 'invalid order'}), 400
+        conn = get_db()
+        for pos, pid in enumerate(order):
+            conn.execute("UPDATE photos SET position=? WHERE id=?", (pos, pid))
+        conn.commit(); conn.close()
+        return jsonify({'ok': True})
+    except Exception as e:
+        log_error(e)
+        return jsonify({'ok': False, 'error': 'reorder failed'}), 500
+
