@@ -1,339 +1,226 @@
-// static/js/studio.js
-// Glam Studio Mode - inline editing + upload + reorder + theme switcher
-// Requires: Quill (already included), SortableJS (already included)
-
+// studio-mode.js — Inline edit + unlock + reorder + theme switching
 (() => {
-  const ADMIN_PWD = '1234'; // same as server
-  const ANIM_DURATION = 450;
-
-  // helpers
+  const PWD = '1234'; // uses same server password; server check is used on unlock
   const qs = s => document.querySelector(s);
   const qsa = s => Array.from(document.querySelectorAll(s));
-  const api = (u, opts) => fetch(u, opts).then(r => r.json());
+  const api = async (url, opts) => {
+    const res = await fetch(url, opts);
+    try { return await res.json(); } catch(e){ return null; }
+  };
 
-  // create secret button (bottom-left)
-  function injectSecretButton() {
-    if (qs('#studio-dot')) return;
-    const btn = document.createElement('div');
-    btn.id = 'studio-dot';
-    btn.title = 'Studio Mode';
-    btn.innerHTML = '✦';
+  // apply initial theme if server saved one
+  async function applySavedTheme() {
+    const cfg = await api('/api/get_settings');
+    if(cfg && cfg.theme_name) {
+      document.body.classList.add(cfg.theme_name);
+    } else if(cfg && cfg.bg_color) {
+      document.body.style.background = cfg.bg_color;
+    }
+  }
+
+  // inject unlock button
+  function injectUnlock() {
+    if(qs('#edit-unlock-btn')) return;
+    const btn = document.createElement('button');
+    btn.id = 'edit-unlock-btn';
+    btn.innerText = '🔒 Edit';
+    btn.title = 'Enter Studio Mode';
+    btn.onclick = showPasswordPrompt;
     document.body.appendChild(btn);
-    btn.addEventListener('click', openPasswordModal);
   }
 
-  // password modal
-  function injectPasswordModal() {
-    if (qs('#studio-modal')) return;
-    const html = `
-      <div id="studio-modal" class="studio-modal" style="display:none">
-        <div class="studio-modal-box">
-          <h3>Enter Studio Password</h3>
-          <input id="studio-pwd" type="password" placeholder="Password" />
-          <div style="margin-top:10px;">
-            <button id="studio-pwd-ok">Unlock</button>
-            <button id="studio-pwd-cancel">Cancel</button>
-          </div>
-          <p id="studio-pwd-error" class="studio-error"></p>
-        </div>
-      </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', html);
-    qs('#studio-pwd-cancel').onclick = () => qs('#studio-modal').style.display = 'none';
-    qs('#studio-pwd-ok').onclick = tryUnlock;
+  // password prompt
+  function showPasswordPrompt() {
+    const p = prompt('Enter Studio password:');
+    if(!p) return;
+    // verify with server
+    api('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password:p})})
+      .then(j => {
+        if(j && j.ok) enterStudio(); else alert('Wrong password');
+      }).catch(()=>alert('Network error'));
   }
 
-  function openPasswordModal() {
-    qs('#studio-modal').style.display = 'flex';
-    qs('#studio-pwd').value = '';
-    qs('#studio-pwd-error').innerText = '';
-    qs('#studio-pwd').focus();
-  }
-
-  async function tryUnlock() {
-    const pwd = qs('#studio-pwd').value || '';
-    // use server login for safety
-    try {
-      const res = await api('/api/login', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({password: pwd})
-      });
-      if (res.ok) {
-        qs('#studio-modal').style.display = 'none';
-        startStudioMode();
-      } else {
-        qs('#studio-pwd-error').innerText = 'Wrong password';
-      }
-    } catch(e) {
-      qs('#studio-pwd-error').innerText = 'Network error';
-    }
-  }
-
-  // ---------- Studio Mode core ----------
-  let quillMap = {};
-  let sortableInstance = null;
-
-  async function startStudioMode() {
-    // animate bloom
+  // entrance animation + enable editing
+  async function enterStudio() {
+    // animation: add class
     document.documentElement.classList.add('studio-activating');
-    setTimeout(()=>document.documentElement.classList.add('studio-on'), ANIM_DURATION);
+    setTimeout(()=>document.documentElement.classList.add('studio-on'), 420);
 
-    // load settings & initialize editors
-    const settings = await api('/api/get_settings');
-    enableInlineEditing(settings);
+    // init inline editing
+    enableInlineEditable();
     initGallerySortable();
-    injectStudioControls(settings);
+    injectThemePicker();
+    injectToolbar();
   }
 
-  // make editable elements interactive
-  function enableInlineEditing(settings) {
-    // Make common fields editable: site title, tagline
-    const editableMap = [
-      {sel:'#site-title', key:'site_title'},
-      {sel:'#site-tagline', key:'tagline'}
-    ];
+  function exitStudio() {
+    document.documentElement.classList.remove('studio-on','studio-activating');
+    location.reload();
+  }
 
-    editableMap.forEach(it => {
-      const el = qs(it.sel);
-      if(!el) return;
-      el.classList.add('studio-editable'); 
-      el.setAttribute('data-setting', it.key);
+  // enable editing for .editable elements
+  function enableInlineEditable(){
+    qsa('.editable').forEach(el=>{
       el.setAttribute('contenteditable','true');
-      // on blur -> save
-      el.addEventListener('blur', debounce(async (ev) => {
-        await saveSetting(it.key, ev.target.innerText.trim());
+      el.classList.add('studio-editable');
+      el.addEventListener('blur', debounce(async ev=>{
+        const key = el.getAttribute('data-key') || el.id || ('text_' + Math.random().toString(36).slice(2,8));
+        const value = el.innerHTML;
+        await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({[key]: value})});
+        showSavedToast();
       }, 700));
-      // show tooltip
-      el.title = 'Double-click or edit text. Changes save automatically.';
+      // keyboard save on ctrl+s
+      el.addEventListener('keydown', ev => {
+        if((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 's'){
+          ev.preventDefault(); el.blur();
+        }
+      });
     });
 
-    // Quill editors for long sections: home_desc, portfolio_desc, prices_desc
-    const longSections = [
-      {id:'quill-home-preview', key:'home_desc'},
-      {id:'quill-portfolio-preview', key:'portfolio_desc'},
-      {id:'quill-prices-preview', key:'prices_desc'}
-    ];
-
-    longSections.forEach(s => {
-      const box = qs(`#${s.id}`);
-      if(!box) return;
-      box.classList.add('studio-rich');
-      // make it contenteditable fallback
-      box.setAttribute('contenteditable','true');
-      box.title = 'Edit content here (rich text supported in Admin)';
-      // load server HTML if present (server returns HTML in settings)
-      if(settings && settings[s.key]) box.innerHTML = settings[s.key];
-      // save on blur
-      box.addEventListener('blur', debounce(async (ev) => {
-        await saveSetting(s.key, ev.target.innerHTML.trim());
-      }, 900));
-    });
-
-    // profile image editable (img with data-setting="profile_image")
-    qsa('img[data-setting]').forEach(img=>{
+    // images with data-setting can be clicked to upload
+    qsa('img[data-setting]').forEach(img => {
       img.style.cursor = 'pointer';
-      img.title = 'Click to change image';
-      img.addEventListener('click', async (ev) => {
-        // open file input
+      img.title = 'Click to replace image';
+      img.addEventListener('click', async () => {
         const file = await pickFile();
         if(!file) return;
-        const upload = await uploadFile(file, 'Profile');
-        if(upload.ok) {
-          img.src = `/uploads/${upload.filename}`;
-          await saveSetting(img.getAttribute('data-setting'), upload.filename);
-        } else alert(upload.error || 'Upload failed');
+        const up = await uploadFile(file);
+        if(up && up.ok){
+          img.src = `/uploads/${up.filename}`;
+          const key = img.getAttribute('data-setting');
+          await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({[key]: up.filename})});
+          showSavedToast();
+        } else alert('Upload failed');
       });
     });
 
-    // hero background (element with id="hero" and data-setting="hero_bg")
-    const hero = qs('#hero');
-    if(hero && hero.getAttribute('data-setting')) {
-      hero.style.cursor = 'pointer';
+    // hero background area if present (data-setting)
+    const hero = qs('[data-setting="hero_bg"]');
+    if(hero){
       hero.title = 'Click to change hero background';
+      hero.style.cursor = 'pointer';
       hero.addEventListener('click', async ()=>{
-        const file = await pickFile();
-        if(!file) return;
-        const up = await uploadFile(file, 'Background');
-        if(up.ok) {
+        const file = await pickFile(); if(!file) return;
+        const up = await uploadFile(file);
+        if(up && up.ok){
           hero.style.backgroundImage = `url('/uploads/${up.filename}')`;
-          await saveSetting(hero.getAttribute('data-setting'), up.filename);
-        } else alert(up.error || 'Upload failed');
+          await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'hero_bg': up.filename})});
+          showSavedToast();
+        } else alert('Upload failed');
       });
     }
-
-    // inline theme selector quick toggle panel
-    injectThemeMiniPicker(settings && settings.bg_color);
   }
 
-  // simple file picker helper returning File or null
-  function pickFile() {
-    return new Promise(resolve=>{
-      const inp = document.createElement('input');
-      inp.type = 'file';
-      inp.accept = 'image/*,video/*';
-      inp.onchange = ()=>resolve(inp.files[0] || null);
-      inp.click();
-    });
-  }
-
-  // upload using /api/upload
-  async function uploadFile(file, category='General') {
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('category', category);
-    fd.append('ftype', file.type && file.type.startsWith('video') ? 'video' : 'photo');
-    try {
-      const res = await fetch('/api/upload', {method:'POST', body: fd});
-      return await res.json();
-    } catch(e) {
-      return {ok:false, error: 'Network upload failed'};
-    }
-  }
-
-  async function saveSetting(key, value) {
-    try {
-      await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({[key]: value})});
-      flashSaved();
-    } catch(e) { console.error(e) }
-  }
-
-  // small saved flash animation
-  function flashSaved() {
-    let el = qs('#studio-saved');
-    if(!el) {
-      el = document.createElement('div');
-      el.id = 'studio-saved';
-      el.className = 'studio-saved';
-      el.innerText = 'Saved';
-      document.body.appendChild(el);
-    }
-    el.classList.add('studio-saved-show');
-    setTimeout(()=>el.classList.remove('studio-saved-show'), 1000);
-  }
-
-  // gallery Sortable
-  async function initGallerySortable() {
-    const container = qs('#gallery-strip');
-    if(!container || !window.Sortable) return;
-    if(sortableInstance) sortableInstance.destroy();
-    sortableInstance = Sortable.create(container, {
-      animation: 180,
+  // gallery reorder using SortableJS for .gallery-grid
+  function initGallerySortable(){
+    const grid = qs('.gallery-grid, .gallery-strip');
+    if(!grid || !window.Sortable) return;
+    if(grid.sortableInstance) grid.sortableInstance.destroy();
+    grid.sortableInstance = Sortable.create(grid, {
+      animation: 160,
       handle: '.g-item',
       onEnd: async () => {
-        // new order IDs (we require each g-item to have data-id)
-        const ids = Array.from(container.querySelectorAll('.g-item')).map(el => parseInt(el.getAttribute('data-id'))).filter(Boolean);
-        if(!ids.length) return;
-        await api('/api/reorder', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({order: ids})});
-        flashSaved();
+        // gather order of data-id attributes
+        const ids = Array.from(grid.querySelectorAll('.g-item')).map(el => parseInt(el.getAttribute('data-id'))).filter(Boolean);
+        if(ids.length){
+          await api('/api/reorder', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({order: ids})});
+          showSavedToast();
+        }
       }
     });
-    // make thumbnails clickable to open media in new tab
-    container.querySelectorAll('.g-item img, .g-item video').forEach(media=>{
-      media.onclick = ()=> window.open(media.src, '_blank');
-    });
   }
 
-  // studio controls (upload directly to gallery)
-  function injectStudioControls(settings) {
-    // Add a small floating toolbar top-right in studio mode
-    if(qs('#studio-toolbar')) return;
-    const html = `
-      <div id="studio-toolbar" class="studio-toolbar">
-        <button id="studio-add-media">+ Add Media</button>
-        <select id="studio-theme-select" title="Pick theme">
-          <option value="pink">Soft Pink</option>
-          <option value="black">Black • Gold</option>
-          <option value="white">White • Beige</option>
-          <option value="royal">Royal Blue</option>
-          <option value="peach">Peach Glow</option>
-          <option value="lilac">Lilac Dream</option>
-          <option value="rose">Rose Gold</option>
-          <option value="neutral">Neutral Chic</option>
-          <option value="studio-dark">Studio Dark</option>
-          <option value="classic">Classic Beige</option>
-          <option value="minimal">Minimal White</option>
-          <option value="gloss">Glossy Black</option>
-          <option value="bold">Bold Contrast</option>
-        </select>
-        <button id="studio-exit">Exit</button>
-      </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', html);
-    qs('#studio-add-media').onclick = async () => {
-      const f = await pickFile(); if(!f) return;
-      const u = await uploadFile(f, 'Gallery');
-      if(u.ok){ location.reload() } else alert('Upload failed');
-    };
-    qs('#studio-exit').onclick = () => {
-      document.documentElement.classList.remove('studio-on','studio-activating');
-      const tb = qs('#studio-toolbar'); if(tb) tb.remove();
-      location.reload();
-    };
-    const sel = qs('#studio-theme-select');
-    // set initial value by examining settings.bg_color or theme (simple heuristic)
-    // when changed, save to settings and apply quick theme
-    sel.onchange = async () => {
-      const val = sel.value;
-      // map theme -> bg_color (simple)
-      const map = {
-        'pink':'#fff0f6','black':'#000000','white':'#ffffff','royal':'#f0f7ff','peach':'#fff4f0',
-        'lilac':'#f9f6ff','rose':'#fff2f4','neutral':'#f6f0ea','studio-dark':'#0b0b0b','classic':'#fbf7f2',
-        'minimal':'#ffffff','gloss':'#0d0d0d','bold':'#f3f3f3'
-      };
-      await saveSetting('bg_color', map[val] || '#fff0f6');
-      document.body.style.background = map[val] || '#fff0f6';
-      flashSaved();
-    };
-  }
-
-  // small theme mini picker near site title
-  function injectThemeMiniPicker(currentBg) {
-    if(qs('#studio-theme-mini')) return;
-    const wrap = document.createElement('div');
-    wrap.id = 'studio-theme-mini';
-    wrap.className = 'studio-theme-mini';
-    wrap.innerHTML = `
-      <label>Theme</label>
-      <select id="studio-mini-select">
-        <option value="pink">Soft Pink</option>
-        <option value="black">Black</option>
-        <option value="white">White</option>
+  // theme picker (save theme_name to server)
+  function injectThemePicker(){
+    if(qs('#theme-picker')) return;
+    const div = document.createElement('div');
+    div.id = 'theme-picker';
+    div.innerHTML = `
+      <label>Layout</label>
+      <select id="theme-select-inline">
+        <option value="theme1">Theme 1 — Luxury Hero</option>
+        <option value="theme2">Theme 2 — Split Screen</option>
+        <option value="theme3">Theme 3 — Masonry</option>
+        <option value="theme4">Theme 4 — Video Landing</option>
+        <option value="theme5">Theme 5 — Centered Profile</option>
+        <option value="theme6">Theme 6 — Sidebar Nav</option>
+        <option value="theme7">Theme 7 — Dark Glam</option>
+        <option value="theme8">Theme 8 — Magazine</option>
+        <option value="theme9">Theme 9 — Parallax</option>
+        <option value="theme10">Theme 10 — Pastel Cards</option>
       </select>
     `;
-    const brand = qs('.branding') || qs('.brand');
-    if(brand) brand.appendChild(wrap);
-    qs('#studio-mini-select').onchange = async (e) => {
-      const map = {pink:'#fff0f6', black:'#000', white:'#ffffff'};
-      await saveSetting('bg_color', map[e.target.value] || '#fff0f6');
-      document.documentElement.style.background = map[e.target.value] || '#fff0f6';
-      flashSaved();
-    };
-  }
-
-  // debounce util
-  function debounce(fn, wait=300){
-    let t;
-    return (...args)=> { clearTimeout(t); t = setTimeout(()=>fn(...args), wait); };
-  }
-
-  // initial injection & setup
-  function init() {
-    injectSecretButton();
-    injectPasswordModal();
-
-    // mark gallery items with data-id to support reorder
-    qsa('.gallery-strip .g-item').forEach((el, idx) => {
-      if(!el.getAttribute('data-id')) {
-        const idMatch = el.querySelector('img,video')?.getAttribute('data-id') || el.getAttribute('data-id') || el.dataset.id;
-        if(idMatch) el.setAttribute('data-id', idMatch);
-      }
+    div.style.position='fixed'; div.style.left='12px'; div.style.top='12px'; div.style.zIndex=99999;
+    div.style.background='rgba(255,255,255,0.95)'; div.style.padding='8px'; div.style.borderRadius='8px'; div.style.boxShadow='0 8px 28px rgba(0,0,0,0.12)';
+    document.body.appendChild(div);
+    const sel = qs('#theme-select-inline');
+    // set current theme
+    api('/api/get_settings').then(cfg=>{
+      if(cfg && cfg.theme_name) sel.value = cfg.theme_name;
     });
-
-    // minor: render quill placeholders if any preview boxes exist (page.html should include these)
+    sel.onchange = async () => {
+      const val = sel.value;
+      // save theme_name
+      await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'theme_name': val})});
+      // apply quickly by reloading page or swapping class
+      location.href = location.pathname; // simple: reload to allow server/template to set correct theme class
+    }
   }
 
-  // run when DOM ready
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  // small toolbar for uploading gallery quick-add & exit
+  function injectToolbar(){
+    if(qs('#studio-toolbar')) return;
+    const bar = document.createElement('div');
+    bar.id = 'studio-toolbar';
+    bar.style.position='fixed'; bar.style.right='12px'; bar.style.top='12px'; bar.style.zIndex=99999;
+    bar.style.display='flex'; bar.style.gap='8px'; bar.style.background='rgba(255,255,255,0.97)'; bar.style.padding='6px'; bar.style.borderRadius='8px'; bar.style.boxShadow='0 10px 30px rgba(0,0,0,0.12)';
+    bar.innerHTML = `<button id="add-media">+ Add Media</button><button id="exit-studio">Exit</button>`;
+    document.body.appendChild(bar);
+    qs('#add-media').onclick = async ()=>{
+      const f = await pickFile(); if(!f) return;
+      const up = await uploadFile(f);
+      if(up && up.ok) location.reload(); else alert('Upload failed');
+    };
+    qs('#exit-studio').onclick = exitStudio;
+  }
+
+  // file picker
+  function pickFile(){
+    return new Promise(resolve=>{
+      const i = document.createElement('input'); i.type='file'; i.accept='image/*,video/*';
+      i.onchange = ()=> resolve(i.files[0] || null);
+      i.click();
+    });
+  }
+
+  // upload file to /api/upload
+  async function uploadFile(file){
+    const fd = new FormData(); fd.append('file', file); fd.append('category','Studio'); fd.append('ftype', file.type && file.type.startsWith('video') ? 'video' : 'photo');
+    const res = await fetch('/api/upload', {method:'POST', body: fd});
+    try { return await res.json(); } catch(e) { return null; }
+  }
+
+  function showSavedToast(){
+    if(qs('#studio-saved')) {
+      qs('#studio-saved').classList.add('studio-saved-show');
+      setTimeout(()=>qs('#studio-saved').classList.remove('studio-saved-show'), 1000);
+      return;
+    }
+    const t = document.createElement('div'); t.id='studio-saved'; t.innerText='Saved'; t.style.position='fixed'; t.style.right='18px'; t.style.bottom='18px';
+    t.style.background='#2ecc71'; t.style.color='#fff'; t.style.padding='8px 12px'; t.style.borderRadius='20px'; t.style.zIndex=99999; document.body.appendChild(t);
+    setTimeout(()=>t.remove(), 1200);
+  }
+
+  // debounce utility
+  function debounce(fn,wait=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait);} }
+
+  // init
+  document.addEventListener('DOMContentLoaded', async ()=>{
+    await applySavedTheme();
+    injectUnlock();
+  });
+
+  // expose small functions globally for template buttons
+  window.unlockStudio = showPasswordPrompt;
+  window.exitStudioMode = exitStudio;
 })();
