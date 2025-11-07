@@ -1,0 +1,10 @@
+/* theme3.css — Masonry gallery first (Pinterest-like) */
+body.theme3{font-family:"Poppins",sans-serif;background:#fff}
+.site-header{padding:14px 4%}
+.gallery-section{padding:24px 4%}
+.gallery-grid{column-count:3;column-gap:14px}
+.g-item{display:inline-block;width:100%;margin:0 0 14px}
+.g-item img, .g-item video{width:100%;border-radius:10px;object-fit:cover}
+.hero-section{padding:36px 4%;text-align:center}
+@media(max-width:1000px){.gallery-grid{column-count:2}}
+@media(max-width:600px){.gallery-grid{column-count:1}}
