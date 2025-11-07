@@ -6,36 +6,37 @@
   <title>{{ site_title }} | Makeup • Hair • Academy</title>
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-  <!-- Core Styles -->
+  <!-- Theme + Animations -->
   <link rel="stylesheet" href="/static/css/theme.css">
-
-  <!-- Quill WYSIWYG -->
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-
-  <!-- SortableJS -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
   <link rel="stylesheet" href="/static/css/studio.css">
 
+  <!-- WYSIWYG & SortableJS -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
-<body class="theme-root">
-  <!-- HEADER -->
-  <header class="site-header">
+
+<body class="theme-root fade-in">
+
+  <!-- ✨ HEADER -->
+  <header class="site-header glass">
     <div class="header-inner">
       <div class="branding">
-        <h1 id="site-title">{{ site_title }}</h1>
-        <p id="site-tagline">{{ tagline }}</p>
+        <img id="laiba-photo" src="/static/img/laiba-profile.jpg" alt="Laiba Irfan" class="profile-photo">
+        <div>
+          <h1 id="site-title">{{ site_title }}</h1>
+          <p id="site-tagline">{{ tagline }}</p>
+        </div>
       </div>
       <div class="header-contact">
-        <span>📞 Call/WhatsApp: <strong>9532472334</strong></span>
-        <span>📧 <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></span>
+        <span>📞 <strong>9532472334</strong></span> |
+        <a href="mailto:workwithlaiba24@gmail.com">📧 workwithlaiba24@gmail.com</a>
       </div>
     </div>
 
-    <nav class="main-nav">
+    <nav class="main-nav underline-anim">
       <a href="/">Home</a>
       <a href="/portfolio">Portfolio</a>
       <a href="/prices">Prices</a>
@@ -43,12 +44,22 @@
     </nav>
   </header>
 
-  <!-- GALLERY STRIP -->
+  <!-- 💫 HERO BACKGROUND -->
+  <section class="hero-banner" style="background-image:url('/static/img/hero-bg.jpg');">
+    <div class="overlay"></div>
+    <div class="hero-text">
+      <h2>Glam by Laiba</h2>
+      <p>Makeup • Hair • Academy</p>
+      <button class="cta">Book Appointment</button>
+    </div>
+  </section>
+
+  <!-- 🌸 GALLERY STRIP -->
   <div class="gallery-strip">
     {% for g in gallery %}
       <div class="g-item">
-        {% if g['type'] == 'video' %}
-          <a class="video-link" href="/uploads/{{ g['filename'] }}" target="_blank">▶ Video</a>
+        {% if g['type']=='video' %}
+          <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
         {% else %}
           <img src="/uploads/{{ g['filename'] }}" alt="">
         {% endif %}
@@ -56,88 +67,39 @@
     {% endfor %}
   </div>
 
-  <!-- MAIN CONTENT -->
+  <!-- 🩰 MAIN CONTENT -->
   <main class="page-container">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- FOOTER -->
-  <footer class="site-footer">
+  <!-- 🌷 FOOTER -->
+  <footer class="site-footer glass">
     <div class="footer-inner">
       <div>© 2025 {{ site_title }} — Crafted with 💄 by Laiba Irfan</div>
       <div>
-        <a href="https://www.instagram.com/glambylaiba_01" target="_blank">Instagram @glambylaiba_01</a>
+        <a href="https://www.instagram.com/glambylaiba_01" target="_blank">
+          <img src="/static/img/insta-icon.svg" alt="Instagram" class="icon"> @glambylaiba_01
+        </a>
       </div>
     </div>
   </footer>
 
-  <!-- ADMIN ACCESS BUTTON -->
-  <div id="admin-dot" title="Admin" onclick="openAdmin()"></div>
+  <!-- 🌟 HIDDEN STUDIO MODE BUTTON -->
+  <div id="studio-button" title="Enter Studio Mode" onclick="enterStudioMode()">
+    ✨
+  </div>
 
-  <!-- ADMIN MODAL -->
-  <div id="admin-modal" class="modal">
-    <div class="modal-box">
-      <!-- LOGIN -->
-      <div id="admin-login">
-        <input id="admin-password" type="password" placeholder="Enter Admin Password">
-        <button onclick="doLogin()">Login</button>
-        <p id="login-error" class="error-msg"></p>
-      </div>
-
-      <!-- DASHBOARD -->
-      <div id="admin-panel" style="display:none;">
-        <h3>Admin Dashboard</h3>
-
-        <section class="admin-section">
-          <h4>🌐 Site Settings</h4>
-          <label>Title</label><input id="site-title-input">
-          <label>Tagline</label><input id="tagline-input">
-          <label>Theme</label>
-          <select id="theme-select">
-            <option value="pink">Soft Pink • Gold</option>
-            <option value="black">Black • Gold</option>
-            <option value="white">White • Beige</option>
-          </select>
-          <button onclick="saveSettings()">💾 Save Settings</button>
-        </section>
-
-        <section class="admin-section">
-          <h4>📸 Gallery</h4>
-          <input type="file" id="file-input">
-          <select id="ftype"><option value="photo">Photo</option><option value="video">Video</option></select>
-          <input id="cat" placeholder="Category (e.g. Bridal)">
-          <button onclick="uploadFile()">Upload</button>
-          <div id="admin-gallery"></div>
-        </section>
-
-        <section class="admin-section">
-          <h4>💰 Prices (Visual Editor)</h4>
-          <div id="prices-editor"></div>
-          <button onclick="savePricesVisual()">Save Prices</button>
-        </section>
-
-        <section class="admin-section">
-          <h4>💬 Reviews</h4>
-          <form id="reviewForm" onsubmit="addReview(event)">
-            <input name="name" placeholder="Name">
-            <textarea name="text" placeholder="Review"></textarea>
-            <input type="file" name="image">
-            <button type="submit">Add Review</button>
-          </form>
-        </section>
-
-        <section class="admin-section">
-          <h4>📝 Descriptions (WYSIWYG)</h4>
-          <label>Home</label><div id="quill-home" class="quill-box"></div>
-          <label>Portfolio</label><div id="quill-portfolio" class="quill-box"></div>
-          <label>Prices</label><div id="quill-prices" class="quill-box"></div>
-        </section>
-
-        <button class="close-btn" onclick="closeAdmin()">Close Admin</button>
-      </div>
+  <!-- 🌟 STUDIO MODE PANEL (future inline editor) -->
+  <div id="studio-panel" class="studio-panel hidden">
+    <div class="studio-overlay"></div>
+    <div class="studio-panel-content fade-up">
+      <h3>Welcome, Laiba 💖</h3>
+      <p>Studio Mode Active — click on any text, image, or price to edit.</p>
+      <button onclick="exitStudioMode()">Exit Studio Mode</button>
     </div>
   </div>
 
-  <script src="/static/js/admin.js"></script>
+  <!-- JS -->
+  <script src="/static/js/studio.js"></script>
 </body>
 </html>
