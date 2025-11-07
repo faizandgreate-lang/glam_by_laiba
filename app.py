@@ -2,6 +2,24 @@ from flask import Flask, render_template, request, jsonify, send_from_directory,
 import sqlite3, os
 from werkzeug.utils import secure_filename
 from pathlib import Path
+def init_db_if_missing():
+    conn = sqlite3.connect("instance/data.db")
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    """)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS gallery (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            type TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
 
 BASE_DIR = Path(__file__).resolve().parent
 UPLOAD_FOLDER = BASE_DIR / 'static' / 'uploads'
