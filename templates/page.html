@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+  {% if page=='portfolio' or page=='home' %}
+    <section class="hero">
+      <h2>Portfolio</h2>
+      <p>Edit this description from Admin</p>
+      <div class="cards">
+        {% for g in gallery %}
+          <div class="card">
+            {% if g['type']=='video' %}
+              <video controls src="/uploads/{{ g['filename'] }}" preload="none"></video>
+            {% else %}
+              <img src="/uploads/{{ g['filename'] }}" alt="">
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if page=='prices' %}
+    <section>
+      <h2>Our Prices</h2>
+      <div class="prices-grid">
+        {% for cat, items in prices.items() %}
+          <div class="price-card">
+            <h3>{{ cat }}</h3>
+            {% for k,v in items.items() %}
+              <div class="price-row"><span>{{ k }}</span><span>{{ v }}</span></div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+
+      <h3>Reviews</h3>
+      <div class="reviews">
+        {% for r in reviews %}
+          <div class="review">
+            {% if r['image'] %}<img src="/uploads/{{ r['image'] }}" alt="">{% endif %}
+            <strong>{{ r['name'] }}</strong>
+            <p>{{ r['text'] }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {% if page=='contact' %}
+    <section>
+      <h2>Contact</h2>
+      <p>Call/WhatsApp: 9532472334 | Email: workwithlaiba24@gmail.com</p>
+      <p>Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
+    </section>
+  {% endif %}
+{% endblock %}
