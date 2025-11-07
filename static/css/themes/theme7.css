@@ -1,0 +1,7 @@
+/* theme7.css — Dark glam */
+body.theme7{background:#050505;color:#eee;font-family:"Poppins",sans-serif}
+.site-header{background:transparent;color:#fff;padding:18px}
+.hero-section{padding:100px 6%;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8))}
+.hero-title{color:#ffd27a;font-family:"Playfair Display",serif}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:36px}
+.g-item img{width:100%;height:260px;object-fit:cover;border-radius:8px;filter:brightness(.95)}
