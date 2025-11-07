@@ -1,0 +1,8 @@
+/* theme10.css — Pastel card layout */
+body.theme10{font-family:"Poppins",sans-serif;background:#fffdfd;color:#222}
+.site-header{padding:20px 6%}
+.hero-section{padding:56px 6%;text-align:center}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:36px}
+.g-item img{width:100%;height:280px;object-fit:cover;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.06)}
+.about-section{padding:40px 6%;display:flex;gap:20px;align-items:center}
+@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
