@@ -1,0 +1,12 @@
+/* theme2.css — Split screen */
+body.theme2{font-family:"Poppins",sans-serif;background:#faf7f7;color:#222}
+.site-header{padding:18px 5%}
+.hero-section{display:flex;min-height:420px}
+.hero-section .hero-left{flex:1;background-size:cover;background-position:center;border-top-left-radius:8px;border-bottom-left-radius:8px}
+.hero-section .hero-right{flex:1;padding:64px}
+.hero-title{font-size:38px;font-family:"Playfair Display",serif;color:#333}
+.gallery-grid{display:flex;flex-wrap:wrap;gap:12px;padding:32px 5%}
+.g-item{flex:1 1 calc(33.333% - 12px);min-width:180px}
+.g-item img, .g-item video{width:100%;height:260px;object-fit:cover;border-radius:8px}
+.about-section{display:block;padding:40px 5%}
+@media(max-width:800px){.hero-section{flex-direction:column}.hero-section .hero-left{height:260px}}
