@@ -1,0 +1,8 @@
+/* theme8.css — Magazine layout */
+body.theme8{font-family:"Playfair Display",serif;background:#fff;color:#222}
+.hero-section{padding:46px 8%;display:grid;grid-template-columns:1fr 420px;gap:20px}
+.hero-left{font-size:20px}
+.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:36px}
+.g-item img{width:100%;height:260px;object-fit:cover;border-radius:6px}
+.about-section{display:flex;gap:20px;padding:36px 8%}
+@media(max-width:980px){.hero-section{grid-template-columns:1fr}}
