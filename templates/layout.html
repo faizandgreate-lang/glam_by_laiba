@@ -1,105 +1,45 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{{ site_title }} | Makeup • Hair • Academy</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <!-- Theme + Animations -->
-  <link rel="stylesheet" href="/static/css/theme.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title class="editable" data-key="site_title">Glam by Laiba</title>
+  <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="/static/css/studio.css">
-
-  <!-- WYSIWYG & SortableJS -->
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <link id="themeStylesheet" rel="stylesheet" href="/static/themes/theme1.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="/static/js/studio.js" defer></script>
+  <script src="/static/js/main.js" defer></script>
 </head>
+<body>
 
-<body class="theme-root fade-in">
-
-  <!-- ✨ HEADER -->
-  <header class="site-header glass">
-    <div class="header-inner">
-      <div class="branding">
-        <img id="laiba-photo" src="/static/img/laiba-profile.jpg" alt="Laiba Irfan" class="profile-photo">
-        <div>
-          <h1 id="site-title">{{ site_title }}</h1>
-          <p id="site-tagline">{{ tagline }}</p>
-        </div>
-      </div>
-      <div class="header-contact">
-        <span>📞 <strong>9532472334</strong></span> |
-        <a href="mailto:workwithlaiba24@gmail.com">📧 workwithlaiba24@gmail.com</a>
-      </div>
-    </div>
-
-    <nav class="main-nav underline-anim">
-      <a href="/">Home</a>
-      <a href="/portfolio">Portfolio</a>
-      <a href="/prices">Prices</a>
-      <a href="/contact">Contact</a>
+  <!-- Header / Navigation -->
+  <header class="site-header">
+    <div class="logo editable" data-key="site_logo">Glam by Laiba</div>
+    <nav class="main-nav">
+      <ul>
+        <li><a href="/" class="editable" data-key="nav_home">Home</a></li>
+        <li><a href="#portfolio" class="editable" data-key="nav_portfolio">Portfolio</a></li>
+        <li><a href="#services" class="editable" data-key="nav_services">Services</a></li>
+        <li><a href="#contact" class="editable" data-key="nav_contact">Contact</a></li>
+        <li><a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="editable" data-key="nav_book">Book Appointment</a></li>
+        <li><a href="/static/uploads/profile.pdf" download class="editable" data-key="nav_profile">Download Profile</a></li>
+      </ul>
     </nav>
   </header>
 
-  <!-- 💫 HERO BACKGROUND -->
-  <section class="hero-banner" style="background-image:url('/static/img/hero-bg.jpg');">
-    <div class="overlay"></div>
-    <div class="hero-text">
-      <h2>Glam by Laiba</h2>
-      <p>Makeup • Hair • Academy</p>
-      <button class="cta">Book Appointment</button>
-    </div>
-  </section>
-
-  <!-- 🌸 GALLERY STRIP -->
-  <div class="gallery-strip">
-    {% for g in gallery %}
-      <div class="g-item">
-        {% if g['type']=='video' %}
-          <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
-        {% else %}
-          <img src="/uploads/{{ g['filename'] }}" alt="">
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-
-  <!-- 🩰 MAIN CONTENT -->
-  <main class="page-container">
-    {% block content %}{% endblock %}
+  <!-- Main Content -->
+  <main>
+    {% block content %}
+    <!-- Page-specific content goes here -->
+    {% endblock %}
   </main>
 
-  <!-- 🌷 FOOTER -->
-  <footer class="site-footer glass">
-    <div class="footer-inner">
-      <div>© 2025 {{ site_title }} — Crafted with 💄 by Laiba Irfan</div>
-      <div>
-        <a href="https://www.instagram.com/glambylaiba_01" target="_blank">
-          <img src="/static/img/insta-icon.svg" alt="Instagram" class="icon"> @glambylaiba_01
-        </a>
-      </div>
-    </div>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
+    <p class="editable" data-key="footer_social">Instagram @glambylaiba_01</p>
   </footer>
 
-  <!-- 🌟 HIDDEN STUDIO MODE BUTTON -->
-  <div id="studio-button" title="Enter Studio Mode" onclick="enterStudioMode()">
-    ✨
-  </div>
-
-  <!-- 🌟 STUDIO MODE PANEL (future inline editor) -->
-  <div id="studio-panel" class="studio-panel hidden">
-    <div class="studio-overlay"></div>
-    <div class="studio-panel-content fade-up">
-      <h3>Welcome, Laiba 💖</h3>
-      <p>Studio Mode Active — click on any text, image, or price to edit.</p>
-      <button onclick="exitStudioMode()">Exit Studio Mode</button>
-    </div>
-  </div>
-
-  <!-- JS -->
-  <script src="/static/js/studio.js"></script>
 </body>
 </html>
