@@ -1,8 +1,294 @@
-/* theme8.css — Magazine layout */
-body.theme8{font-family:"Playfair Display",serif;background:#fff;color:#222}
-.hero-section{padding:46px 8%;display:grid;grid-template-columns:1fr 420px;gap:20px}
-.hero-left{font-size:20px}
-.gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:36px}
-.g-item img{width:100%;height:260px;object-fit:cover;border-radius:6px}
-.about-section{display:flex;gap:20px;padding:36px 8%}
-@media(max-width:980px){.hero-section{grid-template-columns:1fr}}
+/* === THEME 8: Luxury Minimalist Beige + Soft Gray === */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Lora", serif;
+  background-color: #f7f5f0;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Header */
+header {
+  background: #f7f5f0;
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  border-bottom: 1px solid #e0dcd5;
+}
+
+header .logo {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #c19f6f;
+}
+
+header ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+header ul li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+header ul li a:hover {
+  color: #c19f6f;
+}
+
+/* Hero Section */
+.hero {
+  height: 85vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  background-color: #eae5df;
+}
+
+.hero img,
+.hero video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(85%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  max-width: 700px;
+  padding: 2rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #c19f6f;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.hero-content .btn {
+  display: inline-block;
+  background: #c19f6f;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.hero-content .btn:hover {
+  background: #a4825d;
+}
+
+/* Services Section */
+.services {
+  padding: 80px 5%;
+  text-align: center;
+}
+
+.services h2 {
+  font-size: 2.8rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 2px solid #c19f6f;
+  display: inline-block;
+  padding-bottom: 0.5rem;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.service-card {
+  background: #fff;
+  border: 1px solid #e0dcd5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.service-card img,
+.service-card video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.service-card h3 {
+  font-size: 1.4rem;
+  color: #333;
+  margin: 1rem 0 0.5rem;
+}
+
+.service-card p {
+  color: #555;
+  font-size: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* Portfolio Section */
+.portfolio {
+  background: #f7f5f0;
+  padding: 100px 5%;
+  text-align: center;
+}
+
+.portfolio h2 {
+  font-size: 2.8rem;
+  color: #c19f6f;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+.portfolio-filters button {
+  background: transparent;
+  border: 1px solid #c19f6f;
+  color: #c19f6f;
+  padding: 0.6rem 1.8rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.portfolio-filters button.active,
+.portfolio-filters button:hover {
+  background: #c19f6f;
+  color: #fff;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+}
+
+.portfolio-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.portfolio-item img,
+.portfolio-item video {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.portfolio-item:hover img,
+.portfolio-item:hover video {
+  transform: scale(1.05);
+  filter: brightness(80%);
+}
+
+/* Contact Section */
+.contact {
+  background: #fff;
+  padding: 80px 5%;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+}
+
+.contact p {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact .btn {
+  background: #c19f6f;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: 0.3s;
+}
+
+.contact .btn:hover {
+  background: #a4825d;
+}
+
+/* Footer */
+footer {
+  background: #e0dcd5;
+  color: #555;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #d0c9c0;
+  font-size: 0.9rem;
+}
+
+footer a {
+  color: #c19f6f;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header ul {
+    display: none;
+  }
+
+  header .menu-toggle {
+    display: block;
+    font-size: 2rem;
+    color: #c19f6f;
+  }
+
+  .hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .portfolio-item img,
+  .portfolio-item video {
+    height: 200px;
+  }
+}
