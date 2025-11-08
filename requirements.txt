@@ -17,5 +17,5 @@ Flask-Uploads==0.2.1
 # CORS
 Flask-Cors==3.0.10
 
-# Pillow workaround: use version compatible with pre-built wheels
-Pillow==10.1.1  # latest prebuilt wheel for Python 3.13
+# Pillow (prebuilt wheel for Python 3.13)
+Pillow==10.0.1
