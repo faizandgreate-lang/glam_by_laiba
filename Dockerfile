@@ -1,22 +1,25 @@
-# Base image
-FROM python:3.11-slim
+# Use official Python 3.12 image (stable for Pillow)
+FROM python:3.12-slim
 
-# Set environment
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# Set work directory
+# Set working directory
 WORKDIR /app
 
-# Copy requirements
-COPY requirements.txt /app/
-
-# Install dependencies
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Copy project files
-COPY . /app/
+COPY . .
+
+# Install system dependencies for Pillow & Flask uploads
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libjpeg-dev \
+    zlib1g-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --upgrade pip
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
 
 # Expose port
 EXPOSE 5001
