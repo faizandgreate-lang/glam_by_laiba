@@ -1,62 +1,53 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ site_title }} - Academy</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-  <header class="hero">
-    <div class="container">
-      <h1>Parul Garg Makeup Academy</h1>
-      <p class="tagline">Learn from the Best. Glam by Laiba Academy equips you with the skills to help you make a mark!</p>
+{% extends "a/layout.html" %}
+
+{% block content %}
+
+<!-- Academy Hero Section -->
+<section class="academy-hero" data-setting="academy_hero">
+  <div class="hero-text editable" data-key="academy_title">Welcome to Glam Academy 💄</div>
+  <p class="editable" data-key="academy_desc">Learn professional makeup & hair styling from Laiba.</p>
+  <button class="editable" data-key="academy_cta" onclick="window.location.href='#courses'">Explore Courses</button>
+</section>
+
+<!-- Courses Section -->
+<section id="courses" class="academy-courses">
+  <h2 class="editable" data-key="courses_title">Our Courses</h2>
+  <p class="editable" data-key="courses_desc">You can edit course descriptions directly in Studio Mode.</p>
+  <div class="courses-grid">
+    <div class="course-card" data-id="1">
+      <img data-setting="course_img1" src="/static/img/video-placeholder.png" alt="Course">
+      <h3 class="editable" data-key="course_title1">Bridal Makeup Course</h3>
+      <p class="editable" data-key="course_desc1">Learn professional bridal makeup techniques step by step.</p>
     </div>
-  </header>
+    <div class="course-card" data-id="2">
+      <img data-setting="course_img2" src="/static/img/video-placeholder.png" alt="Course">
+      <h3 class="editable" data-key="course_title2">Party Hair Styling Course</h3>
+      <p class="editable" data-key="course_desc2">Master glamorous hairstyles for parties and events.</p>
+    </div>
+  </div>
+</section>
 
-  <main class="container">
-    <section>
-      <h2>Why Choose Us?</h2>
-      <p>The first question you must ask yourself while choosing an academy is - Who is going to teach and how many real clients/brides has the artist done?</p>
-      <p>We teach makeup that looks good in real world and lasts through weddings. Our signature techniques and hands-on practice prepare you for actual clients.</p>
-    </section>
+<!-- Testimonials Section -->
+<section class="academy-testimonials">
+  <h2 class="editable" data-key="testimonials_title">Testimonials</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card" data-id="1">
+      <p class="editable" data-key="testimonial1">“Laiba’s course changed my career! Highly recommended.”</p>
+      <span class="editable" data-key="testimonial_author1">— Sarah Khan</span>
+    </div>
+    <div class="testimonial-card" data-id="2">
+      <p class="editable" data-key="testimonial2">“Amazing teaching style and practical tips for real clients.”</p>
+      <span class="editable" data-key="testimonial_author2">— Ayesha Ali</span>
+    </div>
+  </div>
+</section>
 
-    <section>
-      <h2>Professional Makeup & Hair Course</h2>
-      <p><strong>Upcoming Batch:</strong> 22 December 2025 - Admission Waitlisted</p>
-      <p><strong>WhatsApp to Enrol:</strong> 9532472334</p>
-      <p><strong>Duration:</strong> 20 Classes | <strong>Timings:</strong> 11 AM - 5 PM</p>
-      <p><strong>Fee:</strong> INR 1,52,542 + 18% GST = INR 1,80,000/-</p>
+<!-- Contact / Enrollment Section -->
+<section id="academy-contact" class="academy-contact">
+  <h2 class="editable" data-key="academy_contact_title">Enroll Now</h2>
+  <p class="editable" data-key="academy_contact_desc">Contact me via WhatsApp to book your spot or download course brochure.</p>
+  <a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="editable" data-key="academy_contact_whatsapp">Book Appointment</a>
+  <a href="/static/uploads/academy_brochure.pdf" download class="editable" data-key="academy_contact_pdf">Download Brochure</a>
+</section>
 
-      <h3>Course Content</h3>
-      <ul>
-        <li>Skin preparation and priming</li>
-        <li>Colour correction</li>
-        <li>Concealing skin flaws</li>
-        <li>Base/Foundation types and application</li>
-        <li>Contouring and Highlighting - Cream and Powder</li>
-        <li>Perfecting base on all skin colours</li>
-        <li>Drag Proof Makeup</li>
-        <li>Eye Makeup: Smokey, Cut Crease, Bridal, Glittery techniques</li>
-        <li>Hair Styling: Blow dry, curls, bridal hair</li>
-        <li>Draping: Saree & Lehenga</li>
-        <li>Professional Photoshoot at end of course</li>
-      </ul>
-
-      <p>Video/Audio recording/reselling/redistribution of classes and written material is strictly prohibited.</p>
-    </section>
-
-    <section>
-      <h2>Short & Airbrush Courses</h2>
-      <p>Short Makeup Course: 5 days. Fee: INR 30,000 (includes GST)</p>
-      <p>Airbrush Makeup Course: 3 days. Fee: INR 25,000 + GST</p>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>© 2025 Glam by Laiba Academy. For enquiries: 9532472334</p>
-  </footer>
-
-  <script src="/static/js/main.js"></script>
-</body>
-</html>
+{% endblock %}
