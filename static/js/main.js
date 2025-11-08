@@ -1,50 +1,59 @@
-// filtering and admin actions
-function qs(s){return document.querySelector(s)}
-function qsa(s){return document.querySelectorAll(s)}
+// main.js — Site interactions, UI behaviors
+(() => {
 
-qsa('.filters button').forEach(b=>b.addEventListener('click', ()=>{ let f=b.getAttribute('data-filter'); qsa('#gallery .media').forEach(p=>{ if(f==='All' || p.dataset.category===f) p.style.display='block'; else p.style.display='none' }) }))
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 
-function openAdmin(){ qs('#admin-modal').style.display='flex'; }
-function closeAdmin(){ qs('#admin-modal').style.display='none'; qs('#admin-panel').style.display='none'; qs('#admin-login').style.display='block'; }
+  // Mobile menu toggle
+  const nav = document.querySelector('.nav-bar');
+  if(nav){
+    const menuBtn = document.createElement('button');
+    menuBtn.innerText = '☰';
+    menuBtn.classList.add('nav-toggle');
+    nav.appendChild(menuBtn);
 
-async function doLogin(){
-  const pwd = qs('#admin-password').value
-  const res = await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pwd})})
-  const j = await res.json()
-  if(j.ok){ qs('#admin-login').style.display='none'; qs('#admin-panel').style.display='block'; loadAdminGallery(); }
-  else qs('#login-error').innerText='Wrong password'
-}
+    menuBtn.addEventListener('click', ()=>{
+      nav.classList.toggle('nav-open');
+    });
+  }
 
-async function updateTitle(){
-  const title = qs('#new-title').value
-  const tagline = qs('#new-tagline').value
-  const res = await fetch('/api/update_title',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title, tagline})})
-  const j = await res.json()
-  if(j.ok){ qs('#site-title').innerText = j.title; alert('Title updated') }
-}
+  // Highlight active menu item on scroll
+  const sections = document.querySelectorAll('section, header');
+  const menuItems = document.querySelectorAll('.nav-bar .menu span');
 
-async function uploadMedia(){
-  const file = qs('#file-input').files[0]
-  const ftype = qs('#ftype').value
-  const category = qs('#category-select').value
-  if(!file){ alert('Choose a file'); return }
-  const fd = new FormData(); fd.append('file', file); fd.append('ftype', ftype); fd.append('category', category)
-  const res = await fetch('/api/upload',{method:'POST',body:fd})
-  const j = await res.json()
-  if(j.ok){ alert('Uploaded'); location.reload(); } else alert(j.error||'Upload failed')
-}
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if(window.scrollY >= sectionTop) current = section.getAttribute('id');
+    });
 
-async function loadAdminGallery(){
-  const adminG = qs('#admin-gallery'); adminG.innerHTML=''
-  qsa('#gallery .media').forEach(p=>{
-    const clone = p.cloneNode(true)
-    clone.style.width='120px'; clone.style.cursor='pointer'
-    clone.onclick = async ()=>{ if(!confirm('Delete this item?')) return; const id=p.dataset.id; const res = await fetch('/api/delete/'+id,{method:'POST'}); const j=await res.json(); if(j.ok) location.reload(); else alert('Delete failed') }
-    adminG.appendChild(clone)
-  })
-}
+    menuItems.forEach(item => {
+      item.classList.remove('active');
+      if(item.innerText.toLowerCase() === current) item.classList.add('active');
+    });
+  });
 
-// video modal
-function closeVideo(){ qs('#video-modal').style.display='none'; qs('#player').pause(); qs('#player').src=''; }
-qsa('.play-btn').forEach(b=>b.addEventListener('click', ()=>{ const src=b.getAttribute('data-src'); qs('#player').src = src; qs('#video-modal').style.display='flex'; qs('#player').play(); }))
-window.onclick = function(e){ if(e.target.classList.contains('modal')) closeAdmin(); }
+  // Lazy load images (optional)
+  const lazyImages = document.querySelectorAll('img[data-src]');
+  const lazyLoad = () => {
+    lazyImages.forEach(img => {
+      if(img.getBoundingClientRect().top < window.innerHeight + 100){
+        img.src = img.getAttribute('data-src');
+        img.removeAttribute('data-src');
+      }
+    });
+  };
+  window.addEventListener('scroll', lazyLoad);
+  window.addEventListener('resize', lazyLoad);
+  window.addEventListener('load', lazyLoad);
+
+})();
