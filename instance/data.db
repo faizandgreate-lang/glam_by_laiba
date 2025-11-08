@@ -1,52 +1,56 @@
-import sqlite3
-import os
+-- Drop tables if they exist
+DROP TABLE IF EXISTS settings;
+DROP TABLE IF EXISTS gallery;
+DROP TABLE IF EXISTS theme;
+DROP TABLE IF EXISTS uploads;
 
-DB_PATH = os.path.join('instance', 'data.db')
+-- Table: settings (editable text content)
+CREATE TABLE settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT UNIQUE,
+    value TEXT
+);
 
-def init_db():
-    os.makedirs('instance', exist_ok=True)
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
+-- Default text entries
+INSERT INTO settings (key, value) VALUES ('hero_title', 'Welcome, Laiba 💖');
+INSERT INTO settings (key, value) VALUES ('hero_desc', 'Professional Makeup Artist & Hair Stylist.');
+INSERT INTO settings (key, value) VALUES ('hero_btn', 'Book Appointment');
+INSERT INTO settings (key, value) VALUES ('portfolio_title', '✨ Our Work ✨');
+INSERT INTO settings (key, value) VALUES ('services_title', 'Services We Offer');
+INSERT INTO settings (key, value) VALUES ('service_title_1', 'Makeup');
+INSERT INTO settings (key, value) VALUES ('service_desc_1', 'Professional bridal makeup.');
+INSERT INTO settings (key, value) VALUES ('service_title_2', 'Hair');
+INSERT INTO settings (key, value) VALUES ('service_desc_2', 'Hair styling & treatments.');
+INSERT INTO settings (key, value) VALUES ('service_title_3', 'Academy');
+INSERT INTO settings (key, value) VALUES ('service_desc_3', 'Learn professional makeup.');
+INSERT INTO settings (key, value) VALUES ('footer_text', 'COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖');
+INSERT INTO settings (key, value) VALUES ('footer_social', 'Instagram @glambylaiba_01');
 
-    # Table for editable text content
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS settings (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            key TEXT UNIQUE,
-            value TEXT
-        )
-    ''')
+-- Table: gallery (sortable portfolio)
+CREATE TABLE gallery (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT,
+    position INTEGER
+);
 
-    # Table for gallery/service items order
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS gallery (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT,
-            position INTEGER
-        )
-    ''')
+-- Default gallery items
+INSERT INTO gallery (filename, position) VALUES ('default1.jpg', 1);
+INSERT INTO gallery (filename, position) VALUES ('default2.jpg', 2);
+INSERT INTO gallery (filename, position) VALUES ('default3.jpg', 3);
 
-    # Table for theme selection
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS theme (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            theme_name TEXT
-        )
-    ''')
+-- Table: theme (current selected theme)
+CREATE TABLE theme (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    theme_name TEXT
+);
 
-    # Optional: store uploaded files metadata
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS uploads (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            filename TEXT,
-            category TEXT,
-            filetype TEXT
-        )
-    ''')
+-- Default theme
+INSERT INTO theme (theme_name) VALUES ('theme1');
 
-    conn.commit()
-    conn.close()
-    print("Database initialized at", DB_PATH)
-
-if __name__ == "__main__":
-    init_db()
+-- Table: uploads (all uploaded files)
+CREATE TABLE uploads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filename TEXT,
+    category TEXT,
+    filetype TEXT
+);
