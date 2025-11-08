@@ -1,4 +1,3 @@
-// studio.js
 document.addEventListener("DOMContentLoaded", function () {
   const STUDIO_PASSWORD = "1234";
   let isStudioMode = false;
@@ -66,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --------------------------
-  // Upload file (image/video/pdf)
+  // Upload file (image/video/pdf) - with DB ID
   // --------------------------
   async function uploadFile(input) {
     const file = input.files[0];
@@ -92,9 +91,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (container) {
         const div = document.createElement("div");
         div.classList.add("studio-item");
-        div.dataset.id = data.filename; // temp ID
+        div.dataset.id = data.id; // <-- use database ID
         div.innerHTML = `<img src="/uploads/${data.filename}" alt="" />`;
         container.appendChild(div);
+
+        // Re-initialize drag & drop for new element
+        initDragAndDrop();
       }
       alert("Upload successful!");
     } else {
@@ -154,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // --------------------------
-  // Theme switching
+  // Theme switching (persistent)
   // --------------------------
   async function changeTheme(themeFile) {
     const link = document.getElementById("theme-css");
