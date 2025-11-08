@@ -1,53 +1,85 @@
-{% extends "a/layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glam by Laiba Academy</title>
+  <link id="themeStylesheet" rel="stylesheet" href="/static/themes/theme1.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="/static/js/studio.js" defer></script>
+</head>
+<body>
 
-{% block content %}
+  <!-- Header / Navigation -->
+  <header class="nav-header">
+    <nav>
+      <ul>
+        <li class="editable" data-key="btn_home">Home</li>
+        <li class="editable" data-key="btn_portfolio">Portfolio</li>
+        <li class="editable" data-key="btn_services">Services</li>
+        <li class="editable" data-key="btn_contact">Contact</li>
+        <li><a class="editable" data-key="btn_book" href="#" id="book-btn">Book Appointment</a></li>
+        <li><a class="editable" data-key="btn_profile" href="#" id="profile-btn">Download Profile</a></li>
+      </ul>
+    </nav>
+  </header>
 
-<!-- Academy Hero Section -->
-<section class="academy-hero" data-setting="academy_hero">
-  <div class="hero-text editable" data-key="academy_title">Welcome to Glam Academy 💄</div>
-  <p class="editable" data-key="academy_desc">Learn professional makeup & hair styling from Laiba.</p>
-  <button class="editable" data-key="academy_cta" onclick="window.location.href='#courses'">Explore Courses</button>
-</section>
+  <!-- Hero Section -->
+  <section class="hero-slider" data-setting="hero_bg">
+    <div class="slide editable" data-key="academy_hero_title">Welcome to Glam Academy 💄</div>
+    <p class="editable" data-key="academy_hero_desc">Learn professional makeup and hair styling from Laiba.</p>
+    <video class="editable" data-setting="academy_hero_video" autoplay muted loop playsinline></video>
+  </section>
 
-<!-- Courses Section -->
-<section id="courses" class="academy-courses">
-  <h2 class="editable" data-key="courses_title">Our Courses</h2>
-  <p class="editable" data-key="courses_desc">You can edit course descriptions directly in Studio Mode.</p>
-  <div class="courses-grid">
-    <div class="course-card" data-id="1">
-      <img data-setting="course_img1" src="/static/img/video-placeholder.png" alt="Course">
-      <h3 class="editable" data-key="course_title1">Bridal Makeup Course</h3>
-      <p class="editable" data-key="course_desc1">Learn professional bridal makeup techniques step by step.</p>
+  <!-- Courses / Academy Section -->
+  <section class="academy-courses">
+    <h2 class="editable" data-key="academy_courses_title">Our Courses</h2>
+    <div class="courses-grid">
+      <div class="course-card editable" data-key="course_1">
+        <img data-setting="course_1_img" src="/static/img/video-placeholder.png" alt="Course">
+        <h3 class="editable" data-key="course_1_title">Bridal Makeup</h3>
+        <p class="editable" data-key="course_1_desc">Master bridal makeup with professional techniques.</p>
+      </div>
+      <div class="course-card editable" data-key="course_2">
+        <img data-setting="course_2_img" src="/static/img/video-placeholder.png" alt="Course">
+        <h3 class="editable" data-key="course_2_title">Party Hair Styling</h3>
+        <p class="editable" data-key="course_2_desc">Learn trendy party hair styling.</p>
+      </div>
     </div>
-    <div class="course-card" data-id="2">
-      <img data-setting="course_img2" src="/static/img/video-placeholder.png" alt="Course">
-      <h3 class="editable" data-key="course_title2">Party Hair Styling Course</h3>
-      <p class="editable" data-key="course_desc2">Master glamorous hairstyles for parties and events.</p>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- Testimonials Section -->
-<section class="academy-testimonials">
-  <h2 class="editable" data-key="testimonials_title">Testimonials</h2>
-  <div class="testimonials-grid">
-    <div class="testimonial-card" data-id="1">
-      <p class="editable" data-key="testimonial1">“Laiba’s course changed my career! Highly recommended.”</p>
-      <span class="editable" data-key="testimonial_author1">— Sarah Khan</span>
+  <!-- Testimonials Section -->
+  <section class="academy-testimonials">
+    <h2 class="editable" data-key="academy_testimonials_title">Student Testimonials</h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card editable" data-key="testimonial_1">
+        <p class="editable" data-key="testimonial_1_text">"Amazing academy! Learned so much!"</p>
+        <p class="editable" data-key="testimonial_1_author">- Sarah K.</p>
+      </div>
     </div>
-    <div class="testimonial-card" data-id="2">
-      <p class="editable" data-key="testimonial2">“Amazing teaching style and practical tips for real clients.”</p>
-      <span class="editable" data-key="testimonial_author2">— Ayesha Ali</span>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- Contact / Enrollment Section -->
-<section id="academy-contact" class="academy-contact">
-  <h2 class="editable" data-key="academy_contact_title">Enroll Now</h2>
-  <p class="editable" data-key="academy_contact_desc">Contact me via WhatsApp to book your spot or download course brochure.</p>
-  <a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="editable" data-key="academy_contact_whatsapp">Book Appointment</a>
-  <a href="/static/uploads/academy_brochure.pdf" download class="editable" data-key="academy_contact_pdf">Download Brochure</a>
-</section>
+  <!-- Contact Section -->
+  <section class="contact">
+    <h2 class="editable" data-key="contact_title">Contact Me</h2>
+    <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
+    <a class="editable" data-key="whatsapp_btn" href="#" id="whatsapp-btn">Book Appointment</a>
+    <a class="editable" data-key="profile_download" href="#" id="download-btn">Download Profile</a>
+  </section>
 
-{% endblock %}
+  <!-- Footer -->
+  <footer>
+    <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
+    <p class="editable" data-key="footer_instagram">Instagram @glambylaiba_01</p>
+  </footer>
+
+  <script>
+    // WhatsApp booking link (replace number later)
+    document.getElementById('whatsapp-btn').href = "https://wa.me/your-number?text=Hi%20Laiba,%20I%20want%20to%20book%20an%20appointment";
+
+    // Profile PDF download link (replace file later)
+    document.getElementById('download-btn').href = "/static/uploads/profile.pdf";
+  </script>
+
+</body>
+</html>
