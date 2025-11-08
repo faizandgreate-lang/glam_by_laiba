@@ -1,26 +1,31 @@
-/* ---- Global Styles ---- */
-body {
+/* -----------------------------
+   Core Layout & Typography
+------------------------------ */
+
+/* Reset and basic styles */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
-  background: #fff;
   color: #333;
-  line-height: 1.6;
+  line-height: 1.5;
+  background-color: #fff;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* ---- Header / Navigation ---- */
+/* -----------------------------
+   Header & Navigation
+------------------------------ */
 header {
-  width: 100%;
   position: sticky;
   top: 0;
+  width: 100%;
   z-index: 999;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  background-color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 nav {
@@ -31,32 +36,39 @@ nav {
 }
 
 nav .logo {
-  font-size: 1.8rem;
   font-weight: bold;
-  color: #e74c3c;
+  font-size: 20px;
 }
 
 nav ul {
-  display: flex;
   list-style: none;
-  gap: 16px;
+  display: flex;
+  gap: 20px;
 }
 
 nav ul li a {
-  padding: 6px 12px;
-  border-radius: 4px;
-  transition: background 0.2s;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
 nav ul li a:hover {
-  background: #f1c40f;
-  color: #fff;
+  color: #e67e22;
 }
 
-/* ---- Hero Section ---- */
+/* Navigation buttons for studio editable */
+nav ul li a.editable {
+  cursor: pointer;
+}
+
+/* -----------------------------
+   Hero Section
+------------------------------ */
 .hero {
+  position: relative;
   width: 100%;
-  height: 90vh;
+  min-height: 70vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -64,173 +76,207 @@ nav ul li a:hover {
   text-align: center;
   background: url('/static/img/video-placeholder.png') center/cover no-repeat;
   color: #fff;
-  position: relative;
+  padding: 60px 20px;
 }
 
 .hero h1 {
-  font-size: 3rem;
-  margin: 0;
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 12px;
 }
 
 .hero p {
-  font-size: 1.2rem;
-  margin: 12px 0;
+  font-size: 18px;
+  max-width: 700px;
 }
 
-.hero button {
+/* CTA buttons in hero */
+.hero .cta-button {
+  margin-top: 24px;
   padding: 12px 24px;
-  background: #e74c3c;
+  font-size: 16px;
+  font-weight: bold;
   color: #fff;
+  background-color: #e67e22;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 12px;
-  font-weight: bold;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
-.hero button:hover {
-  background: #c0392b;
+.hero .cta-button:hover {
+  background-color: #d35400;
 }
 
-/* ---- Portfolio / Gallery ---- */
+/* -----------------------------
+   Portfolio / Gallery Section
+------------------------------ */
 .portfolio {
   padding: 60px 20px;
-  background: #f8f8f8;
-}
-
-.portfolio h2 {
-  text-align: center;
-  font-size: 2.4rem;
-  margin-bottom: 40px;
+  background-color: #f8f8f8;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 20px;
 }
 
-.gallery-grid img, .gallery-grid video {
+.gallery-grid .g-item img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  display: block;
   border-radius: 6px;
-  cursor: pointer;
-  transition: transform 0.3s ease;
+  object-fit: cover;
+  transition: transform 0.3s;
 }
 
-.gallery-grid img:hover, .gallery-grid video:hover {
+.gallery-grid .g-item img:hover {
   transform: scale(1.05);
 }
 
-/* ---- Services Section ---- */
+/* Category filter buttons */
+.portfolio-filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.portfolio-filters button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.portfolio-filters button.active,
+.portfolio-filters button:hover {
+  background-color: #e67e22;
+  color: #fff;
+}
+
+/* -----------------------------
+   Services Section
+------------------------------ */
 .services {
   padding: 60px 20px;
 }
 
-.services h2 {
-  text-align: center;
-  font-size: 2.4rem;
-  margin-bottom: 40px;
-}
-
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
 }
 
-.service-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+.services-card {
+  background-color: #fff;
   padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   text-align: center;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s;
 }
 
-.service-card:hover {
-  transform: translateY(-6px);
+.services-card:hover {
+  transform: translateY(-4px);
 }
 
-.service-card img, .service-card video {
+.services-card img {
   width: 100%;
   border-radius: 6px;
   margin-bottom: 12px;
 }
 
-/* ---- Contact Section ---- */
+/* -----------------------------
+   Contact Section
+------------------------------ */
 .contact {
   padding: 60px 20px;
-  background: #fff;
-}
-
-.contact h2 {
+  background-color: #f1f1f1;
   text-align: center;
-  font-size: 2.4rem;
-  margin-bottom: 40px;
 }
 
-.contact form {
-  max-width: 600px;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.contact .contact-info {
+  margin-bottom: 24px;
 }
 
-.contact form input, 
-.contact form textarea {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-}
-
-.contact form button {
-  padding: 12px;
-  background: #e74c3c;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.contact .contact-button {
+  padding: 12px 20px;
   font-weight: bold;
-  transition: background 0.3s;
-}
-
-.contact form button:hover {
-  background: #c0392b;
-}
-
-/* ---- Footer ---- */
-footer {
-  padding: 40px 20px;
-  background: #333;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin: 6px;
   color: #fff;
+}
+
+.contact .whatsapp-button {
+  background-color: #25D366;
+}
+
+.contact .pdf-button {
+  background-color: #3498db;
+}
+
+.contact .contact-button:hover {
+  opacity: 0.9;
+}
+
+/* -----------------------------
+   Footer
+------------------------------ */
+footer {
+  padding: 24px 20px;
   text-align: center;
+  background-color: #333;
+  color: #fff;
+  font-size: 14px;
 }
 
 footer a {
-  color: #f1c40f;
+  color: #e67e22;
+  text-decoration: none;
 }
 
-footer p {
-  margin: 6px 0;
-}
-
-/* ---- Responsive ---- */
+/* -----------------------------
+   Responsive
+------------------------------ */
 @media (max-width: 768px) {
   nav ul {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
   }
-  
+
   .hero h1 {
-    font-size: 2rem;
+    font-size: 32px;
   }
-  
+
   .hero p {
-    font-size: 1rem;
+    font-size: 16px;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+
+  .hero p {
+    font-size: 14px;
   }
 }
