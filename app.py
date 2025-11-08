@@ -23,25 +23,25 @@ def get_db_connection():
 # -------------------------
 @app.route('/')
 def index():
-    return render_template('a/index.html')
+    return render_template('index.html')  # updated path
 
 @app.route('/academy')
 def academy():
-    return render_template('a/academy.html')
+    return render_template('academy.html')  # updated path
 
 @app.route('/layout')
 def layout():
-    return render_template('a/layout.html')
+    return render_template('layout.html')  # updated path
 
 @app.route('/page')
 def page():
-    return render_template('a/page.html')
+    return render_template('page.html')  # updated path
 
 # Catch-all for other pages to avoid 404
 @app.route('/<page>')
 def page_view(page):
     try:
-        return render_template(f'a/{page}.html')
+        return render_template(f'{page}.html')  # updated path
     except:
         return redirect(url_for('index'))
 
