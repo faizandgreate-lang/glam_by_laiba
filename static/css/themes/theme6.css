@@ -1,8 +1,312 @@
-/* theme6.css — Floating sidebar nav */
-body.theme6{font-family:"Poppins",sans-serif;display:flex;min-height:100vh}
-.sidebar{width:240px;background:#fff;padding:20px;border-right:1px solid #f0e9eb;position:fixed;height:100%}
-.page-container{margin-left:260px;flex:1;padding:28px}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.g-item img{height:220px;object-fit:cover;border-radius:8px}
-.hero-section{padding:28px}
-@media(max-width:900px){.sidebar{display:none}.page-container{margin-left:0}}
+/* === THEME 6: Modern White + Rosegold Elegance === */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #fff8f7;
+  color: #333;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* Header */
+header {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(15px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 3rem;
+}
+
+header .logo {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #b76e79; /* rosegold */
+  letter-spacing: 2px;
+}
+
+header ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+header ul li a {
+  color: #444;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+header ul li a:hover {
+  color: #b76e79;
+}
+
+/* Hero Section */
+.hero {
+  height: 95vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom right, #fff5f4, #ffeef0);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.hero-content {
+  position: relative;
+  max-width: 700px;
+  background: rgba(255,255,255,0.8);
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  border: 1px solid rgba(183,110,121,0.3);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  color: #b76e79;
+  font-weight: 600;
+}
+
+.hero-content p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-top: 1rem;
+}
+
+.hero-content .btn {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 0.9rem 2.5rem;
+  background: #b76e79;
+  color: white;
+  border-radius: 40px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+
+.hero-content .btn:hover {
+  background: #a35a65;
+}
+
+/* Services Section */
+.services {
+  background: #fff;
+  padding: 100px 5%;
+  text-align: center;
+}
+
+.services h2 {
+  color: #b76e79;
+  font-size: 2.8rem;
+  margin-bottom: 2rem;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+}
+
+.service-card {
+  background: #fff8f7;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 25px rgba(183,110,121,0.15);
+}
+
+.service-card img,
+.service-card video {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.service-card h3 {
+  color: #b76e79;
+  font-size: 1.3rem;
+  margin-top: 1rem;
+}
+
+.service-card p {
+  color: #555;
+  font-size: 0.95rem;
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+/* Portfolio Section */
+.portfolio {
+  background: #fff5f4;
+  padding: 100px 5%;
+  text-align: center;
+}
+
+.portfolio h2 {
+  font-size: 2.8rem;
+  color: #b76e79;
+  margin-bottom: 2rem;
+}
+
+.portfolio-filters button {
+  background: #fff;
+  border: 1px solid #b76e79;
+  color: #b76e79;
+  padding: 0.6rem 2rem;
+  margin: 0.4rem;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.portfolio-filters button:hover,
+.portfolio-filters button.active {
+  background: #b76e79;
+  color: #fff;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: 2rem;
+}
+
+.portfolio-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.portfolio-item img,
+.portfolio-item video {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.portfolio-item:hover img,
+.portfolio-item:hover video {
+  transform: scale(1.05);
+}
+
+/* Contact Section */
+.contact {
+  background: #fff;
+  padding: 100px 5%;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  color: #b76e79;
+  margin-bottom: 1.2rem;
+}
+
+.contact p {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact .btn {
+  background: #b76e79;
+  color: white;
+  border: none;
+  padding: 0.9rem 2.5rem;
+  border-radius: 40px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact .btn:hover {
+  background: #a35a65;
+}
+
+/* Footer */
+footer {
+  background: #fff5f4;
+  color: #777;
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  border-top: 1px solid rgba(183,110,121,0.2);
+}
+
+footer a {
+  color: #b76e79;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Animations */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header nav ul {
+    display: none;
+  }
+
+  header .menu-toggle {
+    display: block;
+    color: #b76e79;
+    font-size: 1.8rem;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .service-card img, .service-card video {
+    height: 180px;
+  }
+}
