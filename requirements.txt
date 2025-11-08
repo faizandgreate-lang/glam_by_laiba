@@ -13,7 +13,9 @@ Flask-Migrate==4.0.4
 # Forms & uploads
 Flask-WTF==1.1.1
 Flask-Uploads==0.2.1
-Pillow==9.4.0   # <- stable precompiled for Py3.13
 
 # CORS
 Flask-Cors==3.0.10
+
+# Pillow workaround: use version compatible with pre-built wheels
+Pillow==10.1.1  # latest prebuilt wheel for Python 3.13
