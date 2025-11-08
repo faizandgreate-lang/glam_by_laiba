@@ -1,140 +1,74 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>{{ site_title }}</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-  <header class="hero">
-    <div class="container">
-      <h1 id="site-title">{{ site_title }}</h1>
-      <p class="tagline">{{ tagline }}</p>
-      <p class="contact">Call/WhatsApp: 9532472334 | Email: workwithlaiba24@gmail.com</p>
-    </div>
-  </header>
+{% extends "a/base.html" %}
 
-  <nav class="nav">
-    <a href="#portfolio">Portfolio</a>
-    <a href="/academy">Academy</a>
-    <a href="#prices">Prices</a>
-    <a href="#contact">Contact</a>
-  </nav>
+{% block content %}
 
-  <main class="container">
-    <section id="portfolio">
-      <h2>Portfolio</h2>
-      <div class="filters">
-        <button data-filter="All">All</button>
-        <button data-filter="Party">Party</button>
-        <button data-filter="Engagement">Engagement</button>
-        <button data-filter="Bridal">Bridal</button>
-      </div>
-
-      <div id="gallery" class="gallery">
-        {% for it in items %}
-        <div class="media" data-category="{{ it.category }}" data-id="{{ it.id }}" data-type="{{ it.type }}">
-          {% if it.type == 'video' %}
-            <div class="video-thumb">
-              <img src="/static/img/video-placeholder.png" alt="video">
-              <button class="play-btn" data-src="/uploads/{{ it.filename }}">▶</button>
-            </div>
-          {% else %}
-            <img src="/uploads/{{ it.filename }}" alt="photo">
-          {% endif %}
-        </div>
-        {% endfor %}
-      </div>
-    </section>
-
-    <section id="prices">
-      <h2>Prices</h2>
-      <div class="prices-grid">
-        <div>
-          <h3>Party Makeup</h3>
-          <p>Basic: 1500</p>
-          <p>Advance: 2000</p>
-          <p>HD: 3000</p>
-        </div>
-        <div>
-          <h3>Engagement</h3>
-          <p>Basic: 4000</p>
-          <p>Advance: 6000</p>
-          <p>HD Advance: 8000</p>
-        </div>
-        <div>
-          <h3>Bridal</h3>
-          <p>Basic Bridal: 6000</p>
-          <p>HD Bridal: 10000</p>
-          <p>Pakistani Bridal: 12000</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="contact">
-      <h2>Contact</h2>
-      <p>Phone: 9532472334</p>
-      <p>Email: workwithlaiba24@gmail.com</p>
-      <p>Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <p>© 2025 Glam by Laiba. Designed by Laiba Irfan.</p>
-  </footer>
-
-  <!-- hidden admin button -->
-  <div id="admin-dot" title="admin" onclick="openAdmin()"></div>
-
-  <!-- admin modal -->
-  <div id="admin-modal" class="modal">
-    <div class="modal-content">
-      <h3>Admin</h3>
-      <div id="admin-login">
-        <input id="admin-password" placeholder="Enter password" type="password">
-        <button onclick="doLogin()">Login</button>
-        <p id="login-error" class="error"></p>
-      </div>
-
-      <div id="admin-panel" style="display:none">
-        <label>Site title</label>
-        <input id="new-title" placeholder="New site title">
-        <label>Tagline</label>
-        <input id="new-tagline" placeholder="New tagline">
-        <button onclick="updateTitle()">Update</button>
-
-        <hr>
-        <label>Upload</label>
-        <input id="file-input" type="file">
-        <select id="ftype">
-          <option value="photo">Photo</option>
-          <option value="video">Video</option>
-        </select>
-        <select id="category-select">
-          <option>Party</option>
-          <option>Engagement</option>
-          <option>Bridal</option>
-        </select>
-        <button onclick="uploadMedia()">Upload</button>
-
-        <hr>
-        <h4>Gallery (click a media to delete)</h4>
-        <div id="admin-gallery" class="gallery admin"></div>
-
-        <button onclick="closeAdmin()">Close</button>
-      </div>
+<!-- Hero Slider -->
+<section class="hero-slider">
+  <div class="slide" data-setting="hero_slide_1" style="background-image:url('/static/img/video-placeholder.png');">
+    <div class="slide-content">
+      <h1 class="editable" data-key="hero_title_1">Welcome, Laiba 💖</h1>
+      <p class="editable" data-key="hero_desc_1">Edit portfolio description from Admin.</p>
+      <a href="#portfolio" class="cta-btn editable" data-key="hero_btn_1">Explore Portfolio</a>
     </div>
   </div>
-
-  <!-- video modal -->
-  <div id="video-modal" class="modal">
-    <div class="modal-content video-content">
-      <video id="player" controls style="width:100%;max-height:70vh"></video>
-      <button onclick="closeVideo()">Close</button>
+  <div class="slide" data-setting="hero_slide_2" style="background-image:url('/static/img/video-placeholder.png');">
+    <div class="slide-content">
+      <h1 class="editable" data-key="hero_title_2">Luxury Makeup & Hair</h1>
+      <p class="editable" data-key="hero_desc_2">Book your appointment today.</p>
+      <a href="#services" class="cta-btn editable" data-key="hero_btn_2">Our Services</a>
     </div>
   </div>
+</section>
 
-  <script src="/static/js/main.js"></script>
-</body>
-</html>
+<!-- Portfolio Section -->
+<section id="portfolio" class="portfolio">
+  <h2 class="editable" data-key="portfolio_title">Our Portfolio</h2>
+  <p class="editable" data-key="portfolio_desc">Showcase your best work.</p>
+
+  <!-- Categories -->
+  <div class="portfolio-filters">
+    <button data-filter="all">All</button>
+    <button data-filter="bridal">Bridal</button>
+    <button data-filter="party">Party</button>
+    <button data-filter="other">Other</button>
+  </div>
+
+  <div class="gallery-grid">
+    <div class="g-item" data-id="1" data-category="bridal">
+      <img data-setting="portfolio_1" src="/static/img/video-placeholder.png" alt="Portfolio">
+    </div>
+    <div class="g-item" data-id="2" data-category="party">
+      <img data-setting="portfolio_2" src="/static/img/video-placeholder.png" alt="Portfolio">
+    </div>
+    <div class="g-item" data-id="3" data-category="other">
+      <img data-setting="portfolio_3" src="/static/img/video-placeholder.png" alt="Portfolio">
+    </div>
+  </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="services">
+  <h2 class="editable" data-key="services_title">Our Services</h2>
+  <div class="services-grid">
+    <div class="service-card" data-id="1">
+      <img data-setting="service_1_img" src="/static/img/video-placeholder.png" alt="Service">
+      <h3 class="editable" data-key="service_1_title">Bridal Makeup</h3>
+      <p class="editable" data-key="service_1_desc">Full bridal makeup package.</p>
+    </div>
+    <div class="service-card" data-id="2">
+      <img data-setting="service_2_img" src="/static/img/video-placeholder.png" alt="Service">
+      <h3 class="editable" data-key="service_2_title">Party Hair</h3>
+      <p class="editable" data-key="service_2_desc">Glamorous party hairstyles.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="contact">
+  <h2 class="editable" data-key="contact_title">Contact Me</h2>
+  <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
+  <a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="contact-btn editable" data-key="contact_whatsapp">Book Appointment</a>
+  <a href="/static/uploads/profile.pdf" download class="contact-btn editable" data-key="contact_pdf">Download Profile</a>
+</section>
+
+{% endblock %}
