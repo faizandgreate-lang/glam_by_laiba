@@ -1,103 +1,140 @@
-/* ---- Theme Overrides ---- */
+/* ==============================================
+   Glam by Laiba - theme.css
+   Handles 10 professional theme variations
+   Applied dynamically via Studio Mode
+   ============================================== */
 
-/* Default theme (theme1) */
+/* ===== Default Theme (theme1) ===== */
+:root {
+  --primary-color: #ff1493;
+  --accent-color: #ff69b4;
+  --bg-color: #fff;
+  --text-color: #222;
+  --font: 'Poppins', sans-serif;
+}
+
 body.theme1 {
-  --primary-color: #e74c3c;
-  --secondary-color: #f1c40f;
-  --background-color: #fff;
-  --text-color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
-/* Theme 2: Split Screen */
+/* ===== Theme 2 - Minimal Elegant ===== */
 body.theme2 {
-  --primary-color: #8e44ad;
-  --secondary-color: #3498db;
-  --background-color: #fdf6f0;
-  --text-color: #2c3e50;
+  --primary-color: #c2185b;
+  --accent-color: #e91e63;
+  --bg-color: #fafafa;
+  --text-color: #212121;
+  font-family: 'Playfair Display', serif;
 }
 
-/* Theme 3: Masonry */
+/* ===== Theme 3 - Dark Mode ===== */
 body.theme3 {
-  --primary-color: #16a085;
-  --secondary-color: #f39c12;
-  --background-color: #ffffff;
-  --text-color: #34495e;
+  --primary-color: #ff4081;
+  --accent-color: #f06292;
+  --bg-color: #111;
+  --text-color: #f5f5f5;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* Theme 4: Video Landing */
+/* ===== Theme 4 - Gold Luxury ===== */
 body.theme4 {
-  --primary-color: #2980b9;
-  --secondary-color: #e67e22;
-  --background-color: #f8f9fa;
-  --text-color: #2c3e50;
+  --primary-color: #c5a100;
+  --accent-color: #ffdb58;
+  --bg-color: #fffaf0;
+  --text-color: #333;
+  font-family: 'Cormorant Garamond', serif;
 }
 
-/* Theme 5: Centered Profile */
+/* ===== Theme 5 - Soft Rose ===== */
 body.theme5 {
-  --primary-color: #c0392b;
-  --secondary-color: #f1c40f;
-  --background-color: #fff8f0;
-  --text-color: #2c3e50;
+  --primary-color: #ff85a2;
+  --accent-color: #ffc1cc;
+  --bg-color: #fff5f7;
+  --text-color: #222;
+  font-family: 'Quicksand', sans-serif;
 }
 
-/* Theme 6: Sidebar Nav */
+/* ===== Theme 6 - Bold Fashion ===== */
 body.theme6 {
-  --primary-color: #27ae60;
-  --secondary-color: #2980b9;
-  --background-color: #ffffff;
-  --text-color: #2c3e50;
+  --primary-color: #9c27b0;
+  --accent-color: #ba68c8;
+  --bg-color: #f3e5f5;
+  --text-color: #111;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Theme 7: Dark Glam */
+/* ===== Theme 7 - Black & White Modern ===== */
 body.theme7 {
-  --primary-color: #e74c3c;
-  --secondary-color: #f39c12;
-  --background-color: #1c1c1c;
-  --text-color: #ecf0f1;
+  --primary-color: #000;
+  --accent-color: #555;
+  --bg-color: #fff;
+  --text-color: #111;
+  font-family: 'Raleway', sans-serif;
 }
 
-/* Theme 8: Magazine */
+/* ===== Theme 8 - Peach Blush ===== */
 body.theme8 {
-  --primary-color: #9b59b6;
-  --secondary-color: #3498db;
-  --background-color: #fefefe;
-  --text-color: #2c3e50;
+  --primary-color: #ff8a65;
+  --accent-color: #ffab91;
+  --bg-color: #fff3e0;
+  --text-color: #333;
+  font-family: 'Open Sans', sans-serif;
 }
 
-/* Theme 9: Parallax */
+/* ===== Theme 9 - Royal Blue ===== */
 body.theme9 {
-  --primary-color: #d35400;
-  --secondary-color: #c0392b;
-  --background-color: #fdfdfd;
-  --text-color: #2c3e50;
+  --primary-color: #3f51b5;
+  --accent-color: #7986cb;
+  --bg-color: #e8eaf6;
+  --text-color: #111;
+  font-family: 'Nunito', sans-serif;
 }
 
-/* Theme 10: Pastel Cards */
+/* ===== Theme 10 - Champagne Luxe ===== */
 body.theme10 {
-  --primary-color: #ff6f61;
-  --secondary-color: #6c5ce7;
-  --background-color: #fffaf0;
-  --text-color: #2d3436;
+  --primary-color: #d4af37;
+  --accent-color: #f4e1a6;
+  --bg-color: #fffaf5;
+  --text-color: #333;
+  font-family: 'Lora', serif;
 }
 
-/* ---- Apply theme variables ---- */
-body {
-  background-color: var(--background-color);
+/* ===== Universal Theming for UI Elements ===== */
+header, footer, .service-card, .gallery-filter button.active {
+  transition: all 0.3s ease;
+}
+
+a, button {
   color: var(--text-color);
 }
 
 .hero button,
-.contact form button,
-.service-card {
+.contact-buttons a,
+.gallery-filter button.active,
+.nav-links a:hover {
   background-color: var(--primary-color);
   color: #fff;
 }
 
-nav ul li a {
-  color: var(--text-color);
+.service-card h3,
+.portfolio h2,
+.services h2,
+.contact h2 {
+  color: var(--primary-color);
 }
 
-nav ul li a:hover {
-  background-color: var(--secondary-color);
-  color: #fff;
+.navbar h1 {
+  color: var(--primary-color);
+}
+
+footer a {
+  color: var(--accent-color);
+}
+
+button, a {
+  transition: 0.3s ease;
+}
+
+button:hover, a:hover {
+  opacity: 0.8;
 }
