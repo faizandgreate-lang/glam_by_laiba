@@ -1,0 +1,52 @@
+import sqlite3
+import os
+
+DB_PATH = os.path.join('instance', 'data.db')
+
+def init_db():
+    os.makedirs('instance', exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    # Table for editable text content
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS settings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            key TEXT UNIQUE,
+            value TEXT
+        )
+    ''')
+
+    # Table for gallery/service items order
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS gallery (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            position INTEGER
+        )
+    ''')
+
+    # Table for theme selection
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS theme (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            theme_name TEXT
+        )
+    ''')
+
+    # Optional: store uploaded files metadata
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS uploads (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            filename TEXT,
+            category TEXT,
+            filetype TEXT
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
+    print("Database initialized at", DB_PATH)
+
+if __name__ == "__main__":
+    init_db()
