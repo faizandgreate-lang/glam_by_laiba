@@ -1,71 +1,78 @@
-// admin.js — Admin panel & content management helpers
-(() => {
+// admin.js — Admin control for Glam by Laiba
+document.addEventListener('DOMContentLoaded', () => {
+  
+  const PWD = '1234'; // default admin password, can be changed server-side
 
-  const api = async (url, opts) => {
-    const res = await fetch(url, opts);
-    try { return await res.json(); } catch(e) { return null; }
-  };
-
-  // Quick add gallery item
-  async function addGalleryItem() {
-    const file = await pickFile();
-    if(!file) return;
-    const up = await uploadFile(file);
-    if(up && up.ok) {
-      alert('Gallery item added!');
-      location.reload();
-    } else {
-      alert('Upload failed!');
-    }
+  // ===== Admin Panel Unlock =====
+  const unlockBtn = document.querySelector('#admin-unlock-btn');
+  if(unlockBtn){
+    unlockBtn.addEventListener('click', () => {
+      const password = prompt('Enter Admin/Studio password:');
+      if(password === PWD){
+        enterStudioMode();
+      } else {
+        alert('Wrong password!');
+      }
+    });
   }
 
-  // Quick add service item
-  async function addServiceItem() {
-    const file = await pickFile();
-    if(!file) return;
-    const up = await uploadFile(file);
-    if(up && up.ok) {
-      alert('Service item added!');
-      location.reload();
-    } else {
-      alert('Upload failed!');
-    }
+  function enterStudioMode(){
+    document.documentElement.classList.add('studio-on');
+    alert('Studio Mode Activated! You can now edit text, images, videos, and buttons inline.');
+    
+    // Show hidden Studio tools if any
+    const tools = document.querySelectorAll('.studio-tool');
+    tools.forEach(tool => tool.style.display = 'block');
   }
 
-  // File picker helper
-  function pickFile() {
+  // ===== Quick Media Upload Button =====
+  const addMediaBtn = document.querySelector('#admin-add-media');
+  if(addMediaBtn){
+    addMediaBtn.addEventListener('click', async () => {
+      const file = await pickFile();
+      if(file){
+        const result = await uploadFile(file);
+        if(result && result.ok){
+          alert('Media uploaded successfully!');
+          location.reload();
+        } else {
+          alert('Upload failed.');
+        }
+      }
+    });
+  }
+
+  // ===== Pick File Utility =====
+  function pickFile(){
     return new Promise(resolve => {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = 'image/*,video/*';
+      input.accept = 'image/*,video/*,application/pdf';
       input.onchange = () => resolve(input.files[0] || null);
       input.click();
     });
   }
 
-  // File upload helper
-  async function uploadFile(file) {
-    const fd = new FormData();
-    fd.append('file', file);
-    fd.append('category', 'Admin');
-    fd.append('ftype', file.type.startsWith('video') ? 'video' : 'photo');
-    const res = await fetch('/api/upload', {method:'POST', body: fd});
-    try { return await res.json(); } catch(e) { return null; }
+  // ===== Upload File Utility =====
+  async function uploadFile(file){
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+      const response = await fetch('/api/upload', { method:'POST', body: formData });
+      return await response.json();
+    } catch(e){
+      return null;
+    }
   }
 
-  // Delete gallery/service item
-  async function deleteItem(table, id) {
-    if(!confirm('Are you sure you want to delete this item?')) return;
-    const res = await api(`/api/delete?table=${table}&id=${id}`, {method:'POST'});
-    if(res && res.ok) location.reload();
-    else alert('Delete failed!');
+  // ===== Admin Logout =====
+  const exitBtn = document.querySelector('#admin-exit-studio');
+  if(exitBtn){
+    exitBtn.addEventListener('click', () => {
+      document.documentElement.classList.remove('studio-on');
+      alert('Studio Mode Exited.');
+      location.reload();
+    });
   }
 
-  // Expose admin functions globally
-  window.admin = {
-    addGalleryItem,
-    addServiceItem,
-    deleteItem
-  };
-
-})();
+});
