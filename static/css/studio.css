@@ -1,13 +1,113 @@
-/* Studio Mode Styles */
-.studio-on .editable {
-    cursor: text;
-    border: 1px dashed #f06292;
-    padding: 2px 4px;
-    border-radius: 4px;
+/* ---- Studio Mode Core ---- */
+.studio-on .studio-editable {
+  outline: 2px dashed #3498db;
+  outline-offset: 2px;
+  cursor: text;
+  transition: outline 0.2s ease-in-out;
 }
 
-#studio-toolbar, #theme-picker, #studio-saved {
-    font-family: sans-serif;
-    z-index: 99999;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+.studio-editable:focus {
+  outline: 2px solid #e74c3c;
+}
+
+#edit-unlock-btn {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#studio-toolbar button {
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+#studio-toolbar button:hover {
+  background-color: #2980b9;
+}
+
+#theme-picker select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+#studio-saved {
+  animation: fadeInOut 1.2s ease-in-out forwards;
+  font-weight: bold;
+  text-align: center;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.8); }
+  10% { opacity: 1; transform: scale(1.05); }
+  90% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* Make gallery items draggable cursor */
+.g-item {
+  cursor: move;
+  transition: transform 0.2s ease;
+}
+
+/* Highlight while dragging */
+.g-item.dragging {
+  opacity: 0.6;
+  transform: scale(1.05);
+}
+
+/* Hero editable area */
+.hero.studio-editable {
+  outline: 2px dashed #9b59b6;
+}
+
+/* Images & videos editable */
+img.studio-editable, video.studio-editable {
+  border: 2px dashed #f39c12;
+  outline-offset: 2px;
+}
+
+/* Studio Mode activating animation */
+.studio-activating body::before {
+  content: "Entering Studio Mode...";
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f1c40f;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 999999;
+}
+
+/* Theme select / toolbar spacing */
+#studio-toolbar {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  z-index: 99999;
+}
+
+/* Mobile responsiveness for toolbar */
+@media (max-width: 768px) {
+  #studio-toolbar {
+    flex-direction: column;
+    top: auto;
+    bottom: 12px;
+    right: 12px;
+  }
+  
+  #theme-picker {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 12px;
+  }
 }
