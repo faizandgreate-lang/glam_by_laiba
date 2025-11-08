@@ -1,8 +1,293 @@
-/* theme10.css — Pastel card layout */
-body.theme10{font-family:"Poppins",sans-serif;background:#fffdfd;color:#222}
-.site-header{padding:20px 6%}
-.hero-section{padding:56px 6%;text-align:center}
-.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:36px}
-.g-item img{width:100%;height:280px;object-fit:cover;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,0.06)}
-.about-section{padding:40px 6%;display:flex;gap:20px;align-items:center}
-@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+/* === THEME 10: Pastel Cards Light Theme === */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #fdf6f0;
+  color: #333;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+/* Header */
+header {
+  position: sticky;
+  top: 0;
+  background: #ffffffcc;
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 999;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+  border-bottom: 1px solid #eee;
+}
+
+header .logo {
+  font-family: "Playfair Display", serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ff8fa3;
+}
+
+header ul {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+header ul li a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+header ul li a:hover {
+  color: #ff8fa3;
+}
+
+/* Hero Section */
+.hero {
+  height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #ffe6e6, #fff0f5);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero img,
+.hero video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.4;
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 700px;
+  padding: 2rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  color: #ff8fa3;
+  margin-bottom: 1rem;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.hero-content .btn {
+  display: inline-block;
+  background: #ff8fa3;
+  color: #fff;
+  padding: 0.8rem 2rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.hero-content .btn:hover {
+  background: #ff6f81;
+}
+
+/* Services Section */
+.services {
+  padding: 80px 5%;
+  text-align: center;
+}
+
+.services h2 {
+  font-size: 2.5rem;
+  color: #ff8fa3;
+  margin-bottom: 2rem;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+.service-card {
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.service-card img,
+.service-card video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.service-card h3 {
+  font-size: 1.4rem;
+  color: #ff8fa3;
+  margin: 1rem 0 0.5rem;
+}
+
+.service-card p {
+  color: #555;
+  font-size: 1rem;
+  padding: 0 1rem 1rem;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* Portfolio Section */
+.portfolio {
+  padding: 80px 5%;
+  text-align: center;
+}
+
+.portfolio h2 {
+  font-size: 2.5rem;
+  color: #ff8fa3;
+  margin-bottom: 2rem;
+}
+
+.portfolio-filters button {
+  background: #fff;
+  border: 1px solid #ff8fa3;
+  color: #ff8fa3;
+  padding: 0.6rem 1.8rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 25px;
+  transition: 0.3s;
+}
+
+.portfolio-filters button.active,
+.portfolio-filters button:hover {
+  background: #ff8fa3;
+  color: #fff;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+}
+
+.portfolio-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+}
+
+.portfolio-item img,
+.portfolio-item video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.portfolio-item:hover img,
+.portfolio-item:hover video {
+  transform: scale(1.05);
+  filter: brightness(85%);
+}
+
+/* Contact Section */
+.contact {
+  background: #fff5f8;
+  padding: 80px 5%;
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2.5rem;
+  color: #ff8fa3;
+  margin-bottom: 1.5rem;
+}
+
+.contact p {
+  color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact .btn {
+  background: #ff8fa3;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2.2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.contact .btn:hover {
+  background: #ff6f81;
+}
+
+/* Footer */
+footer {
+  background: #fff;
+  color: #555;
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+footer a {
+  color: #ff8fa3;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header ul {
+    display: none;
+  }
+
+  header .menu-toggle {
+    display: block;
+    font-size: 2rem;
+    color: #ff8fa3;
+  }
+
+  .hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .portfolio-item img,
+  .portfolio-item video,
+  .service-card img,
+  .service-card video {
+    height: 180px;
+  }
+}
