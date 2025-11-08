@@ -3,43 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title class="editable" data-key="site_title">Glam by Laiba</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="/static/css/studio.css">
-  <link id="themeStylesheet" rel="stylesheet" href="/static/themes/theme1.css">
+  <title>Glam by Laiba</title>
+  <link id="themeStylesheet" rel="stylesheet" href="../static/themes/theme1.css">
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <script src="/static/js/studio.js" defer></script>
-  <script src="/static/js/main.js" defer></script>
+  <script src="../static/js/studio.js" defer></script>
 </head>
 <body>
 
   <!-- Header / Navigation -->
-  <header class="site-header">
-    <div class="logo editable" data-key="site_logo">Glam by Laiba</div>
-    <nav class="main-nav">
-      <ul>
-        <li><a href="/" class="editable" data-key="nav_home">Home</a></li>
-        <li><a href="#portfolio" class="editable" data-key="nav_portfolio">Portfolio</a></li>
-        <li><a href="#services" class="editable" data-key="nav_services">Services</a></li>
-        <li><a href="#contact" class="editable" data-key="nav_contact">Contact</a></li>
-        <li><a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="editable" data-key="nav_book">Book Appointment</a></li>
-        <li><a href="/static/uploads/profile.pdf" download class="editable" data-key="nav_profile">Download Profile</a></li>
-      </ul>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="editable" data-key="nav_home">Home</a>
+      <a href="page.html" class="editable" data-key="nav_portfolio">Portfolio</a>
+      <a href="layout.html#services" class="editable" data-key="nav_services">Services</a>
+      <a href="layout.html#contact" class="editable" data-key="nav_contact">Contact</a>
+      <a href="#" class="editable" data-key="nav_appointment" onclick="window.open('https://wa.me/9532472334', '_blank')">Book Appointment</a>
+      <a href="#" class="editable" data-key="nav_profile" id="downloadProfileBtn">Download Profile</a>
     </nav>
   </header>
 
-  <!-- Main Content -->
-  <main>
-    {% block content %}
-    <!-- Page-specific content goes here -->
-    {% endblock %}
-  </main>
+  <!-- Hero Section -->
+  <section class="hero" data-setting="hero_bg">
+    <div class="hero-slider">
+      <div class="hero-slide">
+        <h1 class="editable" data-key="hero_title">Welcome, Laiba 💖</h1>
+        <p class="editable" data-key="hero_desc">Edit your portfolio description from Admin.</p>
+      </div>
+      <!-- Studio Mode can add more slides here -->
+    </div>
+  </section>
+
+  <!-- Portfolio / Gallery Section -->
+  <section class="portfolio">
+    <h2 class="editable" data-key="portfolio_title">Our Portfolio</h2>
+    <div class="portfolio-filters">
+      <button class="filter-btn" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="bridal">Bridal</button>
+      <button class="filter-btn" data-filter="party">Party</button>
+      <button class="filter-btn" data-filter="other">Other</button>
+    </div>
+    <div class="gallery-grid">
+      <div class="g-item" data-id="1" data-category="bridal">
+        <img data-setting="portfolio_1" src="../static/img/video-placeholder.png" alt="Portfolio">
+      </div>
+      <div class="g-item" data-id="2" data-category="party">
+        <img data-setting="portfolio_2" src="../static/img/video-placeholder.png" alt="Portfolio">
+      </div>
+      <div class="g-item" data-id="3" data-category="other">
+        <img data-setting="portfolio_3" src="../static/img/video-placeholder.png" alt="Portfolio">
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services" id="services">
+    <h2 class="editable" data-key="services_title">Our Services</h2>
+    <div class="services-grid">
+      <div class="service-item" data-id="s1">
+        <img data-setting="service_1_img" src="../static/img/video-placeholder.png" alt="Service">
+        <h3 class="editable" data-key="service_1_title">Makeup</h3>
+        <p class="editable" data-key="service_1_desc">Professional bridal and party makeup.</p>
+      </div>
+      <div class="service-item" data-id="s2">
+        <img data-setting="service_2_img" src="../static/img/video-placeholder.png" alt="Service">
+        <h3 class="editable" data-key="service_2_title">Hair</h3>
+        <p class="editable" data-key="service_2_desc">Hairstyling for all occasions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <h2 class="editable" data-key="contact_title">Contact Me</h2>
+    <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
+    <button onclick="window.open('https://wa.me/9532472334', '_blank')" class="editable" data-key="contact_whatsapp">Book Appointment</button>
+    <button id="downloadPDFBtn" class="editable" data-key="contact_profile">Download Profile</button>
+  </section>
 
   <!-- Footer -->
-  <footer class="site-footer">
+  <footer>
     <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
     <p class="editable" data-key="footer_social">Instagram @glambylaiba_01</p>
   </footer>
+
+  <script>
+    // PDF download functionality
+    document.getElementById('downloadPDFBtn').addEventListener('click', () => {
+      window.open('/uploads/profile.pdf', '_blank');
+    });
+  </script>
 
 </body>
 </html>
