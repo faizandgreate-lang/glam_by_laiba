@@ -1,85 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glam by Laiba Academy</title>
-  <link id="themeStylesheet" rel="stylesheet" href="/static/themes/theme1.css">
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <script src="/static/js/studio.js" defer></script>
-</head>
-<body>
+{% extends "base.html" %}
 
-  <!-- Header / Navigation -->
-  <header class="nav-header">
-    <nav>
-      <ul>
-        <li class="editable" data-key="btn_home">Home</li>
-        <li class="editable" data-key="btn_portfolio">Portfolio</li>
-        <li class="editable" data-key="btn_services">Services</li>
-        <li class="editable" data-key="btn_contact">Contact</li>
-        <li><a class="editable" data-key="btn_book" href="#" id="book-btn">Book Appointment</a></li>
-        <li><a class="editable" data-key="btn_profile" href="#" id="profile-btn">Download Profile</a></li>
-      </ul>
-    </nav>
-  </header>
+{% block title %}Academy - Glam by Laiba{% endblock %}
 
-  <!-- Hero Section -->
-  <section class="hero-slider" data-setting="hero_bg">
-    <div class="slide editable" data-key="academy_hero_title">Welcome to Glam Academy 💄</div>
-    <p class="editable" data-key="academy_hero_desc">Learn professional makeup and hair styling from Laiba.</p>
-    <video class="editable" data-setting="academy_hero_video" autoplay muted loop playsinline></video>
-  </section>
+{% block content %}
+<!-- Hero Section -->
+<section class="hero" data-setting="academy_hero_bg" style="background-image: url('/static/img/video-placeholder.png');">
+  <div class="hero-text editable" data-key="academy_hero_title">Welcome to Glam Academy 💄</div>
+  <p class="editable" data-key="academy_hero_desc">Learn professional makeup, hair, and beauty skills from Laiba.</p>
+  <a href="#courses" class="editable hero-cta" data-key="academy_hero_btn">Explore Courses</a>
+</section>
 
-  <!-- Courses / Academy Section -->
-  <section class="academy-courses">
-    <h2 class="editable" data-key="academy_courses_title">Our Courses</h2>
-    <div class="courses-grid">
-      <div class="course-card editable" data-key="course_1">
-        <img data-setting="course_1_img" src="/static/img/video-placeholder.png" alt="Course">
-        <h3 class="editable" data-key="course_1_title">Bridal Makeup</h3>
-        <p class="editable" data-key="course_1_desc">Master bridal makeup with professional techniques.</p>
-      </div>
-      <div class="course-card editable" data-key="course_2">
-        <img data-setting="course_2_img" src="/static/img/video-placeholder.png" alt="Course">
-        <h3 class="editable" data-key="course_2_title">Party Hair Styling</h3>
-        <p class="editable" data-key="course_2_desc">Learn trendy party hair styling.</p>
-      </div>
+<!-- Courses / Services Section -->
+<section id="courses" class="academy-courses">
+  <h2 class="editable" data-key="academy_courses_title">Our Courses</h2>
+  <div class="courses-grid">
+    <div class="course-card" data-id="1">
+      <img data-setting="course_1_img" src="/static/img/video-placeholder.png" alt="Course Image">
+      <h3 class="editable" data-key="course_1_title">Bridal Makeup Masterclass</h3>
+      <p class="editable" data-key="course_1_desc">Learn complete bridal looks step-by-step.</p>
     </div>
-  </section>
-
-  <!-- Testimonials Section -->
-  <section class="academy-testimonials">
-    <h2 class="editable" data-key="academy_testimonials_title">Student Testimonials</h2>
-    <div class="testimonials-grid">
-      <div class="testimonial-card editable" data-key="testimonial_1">
-        <p class="editable" data-key="testimonial_1_text">"Amazing academy! Learned so much!"</p>
-        <p class="editable" data-key="testimonial_1_author">- Sarah K.</p>
-      </div>
+    <div class="course-card" data-id="2">
+      <img data-setting="course_2_img" src="/static/img/video-placeholder.png" alt="Course Image">
+      <h3 class="editable" data-key="course_2_title">Party & Event Makeup</h3>
+      <p class="editable" data-key="course_2_desc">Get party-ready makeup techniques from experts.</p>
     </div>
-  </section>
+    <div class="course-card" data-id="3">
+      <img data-setting="course_3_img" src="/static/img/video-placeholder.png" alt="Course Image">
+      <h3 class="editable" data-key="course_3_title">Hair Styling & Extensions</h3>
+      <p class="editable" data-key="course_3_desc">Master hair styling, curls, and extensions professionally.</p>
+    </div>
+  </div>
+</section>
 
-  <!-- Contact Section -->
-  <section class="contact">
-    <h2 class="editable" data-key="contact_title">Contact Me</h2>
-    <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
-    <a class="editable" data-key="whatsapp_btn" href="#" id="whatsapp-btn">Book Appointment</a>
-    <a class="editable" data-key="profile_download" href="#" id="download-btn">Download Profile</a>
-  </section>
+<!-- Gallery Section -->
+<section class="academy-gallery">
+  <h2 class="editable" data-key="academy_gallery_title">Student Work / Gallery</h2>
+  <div class="gallery-grid">
+    <div class="g-item" data-id="1"><img data-setting="gallery_1" src="/static/img/video-placeholder.png" alt="Gallery"></div>
+    <div class="g-item" data-id="2"><img data-setting="gallery_2" src="/static/img/video-placeholder.png" alt="Gallery"></div>
+    <div class="g-item" data-id="3"><img data-setting="gallery_3" src="/static/img/video-placeholder.png" alt="Gallery"></div>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
-    <p class="editable" data-key="footer_instagram">Instagram @glambylaiba_01</p>
-  </footer>
+<!-- Contact / Book Section -->
+<section id="contact" class="academy-contact">
+  <h2 class="editable" data-key="academy_contact_title">Get in Touch</h2>
+  <p class="editable" data-key="academy_contact_desc">Have questions? Book a session or download our academy brochure.</p>
+  <a href="#" class="editable btn" data-key="academy_download_profile" id="downloadAcademyProfile">Download PDF</a>
+  <a href="#" class="editable btn" data-key="academy_whatsapp" onclick="window.open('https://wa.me/9532472334', '_blank')">Book Appointment</a>
+</section>
 
-  <script>
-    // WhatsApp booking link (replace number later)
-    document.getElementById('whatsapp-btn').href = "https://wa.me/your-number?text=Hi%20Laiba,%20I%20want%20to%20book%20an%20appointment";
-
-    // Profile PDF download link (replace file later)
-    document.getElementById('download-btn').href = "/static/uploads/profile.pdf";
-  </script>
-
-</body>
-</html>
+<script>
+  // PDF download functionality for Academy page
+  document.getElementById('downloadAcademyProfile').addEventListener('click', () => {
+    window.open('/uploads/academy_profile.pdf', '_blank');
+  });
+</script>
+{% endblock %}
