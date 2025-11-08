@@ -1,103 +1,111 @@
-from flask import Flask, jsonify, request, send_from_directory
-import sqlite3
+# app.py
 import os
+import sqlite3
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect
 
 app = Flask(__name__)
-DB_PATH = "instance/data.db"
-UPLOAD_FOLDER = "static/uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# ---------------------
-# Helper: DB connection
-# ---------------------
-def get_db():
+DB_PATH = os.path.join('instance', 'data.db')
+STUDIO_PASSWORD = "1234"  # Change your Studio password here
+
+# -------------------------
+# Database helper
+# -------------------------
+def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-# ---------------------
-# API: Get all settings
-# ---------------------
-@app.route("/api/get_settings")
-def get_settings():
-    conn = get_db()
-    rows = conn.execute("SELECT key, value FROM settings").fetchall()
-    conn.close()
-    return jsonify({row["key"]: row["value"] for row in rows})
+# -------------------------
+# Routes - Pages
+# -------------------------
+@app.route('/')
+def index():
+    return render_template('a/index.html')
 
-# ---------------------
-# API: Update a setting
-# ---------------------
-@app.route("/api/settings", methods=["POST"])
-def update_setting():
-    data = request.json
-    conn = get_db()
-    for key, value in data.items():
-        conn.execute(
-            "INSERT INTO settings (key, value) VALUES (?, ?) "
-            "ON CONFLICT(key) DO UPDATE SET value=excluded.value",
-            (key, value)
-        )
+@app.route('/academy')
+def academy():
+    return render_template('a/academy.html')
+
+@app.route('/<page>')
+def page_view(page):
+    return render_template(f'a/{page}.html')
+
+# -------------------------
+# Routes - Studio Mode APIs
+# -------------------------
+
+# Get settings
+@app.route('/api/get_settings')
+def get_settings():
+    conn = get_db_connection()
+    rows = conn.execute("SELECT * FROM settings").fetchall()
+    conn.close()
+    data = {row['key']: row['value'] for row in rows}
+    return jsonify(data)
+
+# Save settings
+@app.route('/api/settings', methods=['POST'])
+def save_settings():
+    data = request.get_json()
+    conn = get_db_connection()
+    for k, v in data.items():
+        conn.execute("INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)", (k, v))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
 
-# ---------------------
-# API: Upload media (photo/video/pdf)
-# ---------------------
-@app.route("/api/upload", methods=["POST"])
-def upload_file():
-    file = request.files.get("file")
-    category = request.form.get("category", "Studio")
-    ftype = request.form.get("ftype", "photo")
-    if not file:
-        return jsonify({"ok": False})
-    
-    filename = file.filename
-    save_path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(save_path)
+# Login for Studio Mode
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    if data.get('password') == STUDIO_PASSWORD:
+        return jsonify({"ok": True})
+    return jsonify({"ok": False})
 
-    # Save record in uploads table
-    conn = get_db()
+# Upload media (image/video/PDF)
+@app.route('/api/upload', methods=['POST'])
+def upload():
+    file = request.files.get('file')
+    category = request.form.get('category', 'Studio')
+    ftype = request.form.get('ftype', 'photo')
+    if not file:
+        return jsonify({"ok": False, "error": "No file uploaded"})
+
+    filename = file.filename
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    file.save(filepath)
+
+    conn = get_db_connection()
     conn.execute(
-        "INSERT INTO uploads (filename, filetype, category) VALUES (?, ?, ?)",
+        "INSERT INTO uploads (filename, type, category) VALUES (?, ?, ?)",
         (filename, ftype, category)
     )
     conn.commit()
     conn.close()
     return jsonify({"ok": True, "filename": filename})
 
-# ---------------------
-# API: Reorder gallery
-# ---------------------
-@app.route("/api/reorder", methods=["POST"])
-def reorder_gallery():
-    data = request.json
-    order = data.get("order", [])
-    conn = get_db()
-    for pos, gid in enumerate(order, 1):
-        conn.execute("UPDATE gallery SET position=? WHERE id=?", (pos, gid))
+# Reorder gallery
+@app.route('/api/reorder', methods=['POST'])
+def reorder():
+    data = request.get_json()
+    order = data.get('order', [])
+    conn = get_db_connection()
+    for idx, gallery_id in enumerate(order):
+        conn.execute("UPDATE gallery SET sort_order = ? WHERE id = ?", (idx, gallery_id))
     conn.commit()
     conn.close()
     return jsonify({"ok": True})
 
-# ---------------------
-# API: Studio login
-# ---------------------
-@app.route("/api/login", methods=["POST"])
-def studio_login():
-    data = request.json
-    if data.get("password") == "1234":
-        return jsonify({"ok": True})
-    return jsonify({"ok": False})
-
-# ---------------------
-# Serve uploaded files
-# ---------------------
-@app.route("/uploads/<path:filename>")
+# Serve uploads
+@app.route('/uploads/<filename>')
 def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-# ---------------------
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+# -------------------------
+# Run app
+# -------------------------
+if __name__ == '__main__':
+    app.run(debug=True, port=5001)
