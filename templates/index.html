@@ -1,74 +1,91 @@
-{% extends "a/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glam by Laiba</title>
+  <link id="themeStylesheet" rel="stylesheet" href="themes/theme1.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="js/studio.js" defer></script>
+</head>
+<body>
 
-{% block content %}
+  <!-- Navigation -->
+  <nav class="nav">
+    <ul>
+      <li class="editable" data-key="nav_home">Home</li>
+      <li class="editable" data-key="nav_portfolio">Portfolio</li>
+      <li class="editable" data-key="nav_services">Services</li>
+      <li class="editable" data-key="nav_contact">Contact</li>
+      <li><a href="#" id="book-appointment" class="editable" data-key="nav_book">Book Appointment</a></li>
+      <li><a href="#" id="download-profile" class="editable" data-key="nav_download">Download Profile</a></li>
+    </ul>
+  </nav>
 
-<!-- Hero Slider -->
-<section class="hero-slider">
-  <div class="slide" data-setting="hero_slide_1" style="background-image:url('/static/img/video-placeholder.png');">
-    <div class="slide-content">
-      <h1 class="editable" data-key="hero_title_1">Welcome, Laiba 💖</h1>
-      <p class="editable" data-key="hero_desc_1">Edit portfolio description from Admin.</p>
-      <a href="#portfolio" class="cta-btn editable" data-key="hero_btn_1">Explore Portfolio</a>
+  <!-- Hero Slider -->
+  <section class="hero-slider">
+    <div class="slide" data-setting="hero_bg_1" style="background-image:url('/static/img/video-placeholder.png');">
+      <div class="hero-text editable" data-key="hero_title_1">Welcome, Laiba 💖</div>
+      <p class="editable" data-key="hero_desc_1">Edit your portfolio description here</p>
     </div>
-  </div>
-  <div class="slide" data-setting="hero_slide_2" style="background-image:url('/static/img/video-placeholder.png');">
-    <div class="slide-content">
-      <h1 class="editable" data-key="hero_title_2">Luxury Makeup & Hair</h1>
-      <p class="editable" data-key="hero_desc_2">Book your appointment today.</p>
-      <a href="#services" class="cta-btn editable" data-key="hero_btn_2">Our Services</a>
+    <div class="slide" data-setting="hero_bg_2" style="background-image:url('/static/img/video-placeholder.png');">
+      <div class="hero-text editable" data-key="hero_title_2">Luxury Makeup & Hair</div>
+      <p class="editable" data-key="hero_desc_2">Perfect for every occasion</p>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Portfolio Section -->
-<section id="portfolio" class="portfolio">
-  <h2 class="editable" data-key="portfolio_title">Our Portfolio</h2>
-  <p class="editable" data-key="portfolio_desc">Showcase your best work.</p>
-
-  <!-- Categories -->
-  <div class="portfolio-filters">
-    <button data-filter="all">All</button>
-    <button data-filter="bridal">Bridal</button>
-    <button data-filter="party">Party</button>
-    <button data-filter="other">Other</button>
-  </div>
-
-  <div class="gallery-grid">
-    <div class="g-item" data-id="1" data-category="bridal">
-      <img data-setting="portfolio_1" src="/static/img/video-placeholder.png" alt="Portfolio">
+  <!-- Services Section -->
+  <section class="services">
+    <h2 class="editable" data-key="services_title">Our Services</h2>
+    <div class="services-grid">
+      <div class="service-card" data-id="1">
+        <img data-setting="service_1_img" src="/static/img/video-placeholder.png" alt="Service">
+        <h3 class="editable" data-key="service_1_title">Bridal Makeup</h3>
+        <p class="editable" data-key="service_1_desc">Flawless bridal makeup</p>
+      </div>
+      <div class="service-card" data-id="2">
+        <img data-setting="service_2_img" src="/static/img/video-placeholder.png" alt="Service">
+        <h3 class="editable" data-key="service_2_title">Party Hair</h3>
+        <p class="editable" data-key="service_2_desc">Glamorous party hair styles</p>
+      </div>
     </div>
-    <div class="g-item" data-id="2" data-category="party">
-      <img data-setting="portfolio_2" src="/static/img/video-placeholder.png" alt="Portfolio">
-    </div>
-    <div class="g-item" data-id="3" data-category="other">
-      <img data-setting="portfolio_3" src="/static/img/video-placeholder.png" alt="Portfolio">
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- Services Section -->
-<section id="services" class="services">
-  <h2 class="editable" data-key="services_title">Our Services</h2>
-  <div class="services-grid">
-    <div class="service-card" data-id="1">
-      <img data-setting="service_1_img" src="/static/img/video-placeholder.png" alt="Service">
-      <h3 class="editable" data-key="service_1_title">Bridal Makeup</h3>
-      <p class="editable" data-key="service_1_desc">Full bridal makeup package.</p>
+  <!-- Portfolio Section -->
+  <section class="portfolio">
+    <h2 class="editable" data-key="portfolio_title">Our Portfolio</h2>
+    <div class="portfolio-filters">
+      <button data-filter="all">All</button>
+      <button data-filter="bridal">Bridal</button>
+      <button data-filter="party">Party</button>
+      <button data-filter="other">Other</button>
     </div>
-    <div class="service-card" data-id="2">
-      <img data-setting="service_2_img" src="/static/img/video-placeholder.png" alt="Service">
-      <h3 class="editable" data-key="service_2_title">Party Hair</h3>
-      <p class="editable" data-key="service_2_desc">Glamorous party hairstyles.</p>
+    <div class="gallery-grid">
+      <div class="g-item" data-id="1" data-category="bridal">
+        <img data-setting="portfolio_1" src="/static/img/video-placeholder.png" alt="Portfolio">
+      </div>
+      <div class="g-item" data-id="2" data-category="party">
+        <img data-setting="portfolio_2" src="/static/img/video-placeholder.png" alt="Portfolio">
+      </div>
+      <div class="g-item" data-id="3" data-category="other">
+        <img data-setting="portfolio_3" src="/static/img/video-placeholder.png" alt="Portfolio">
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Contact Section -->
-<section id="contact" class="contact">
-  <h2 class="editable" data-key="contact_title">Contact Me</h2>
-  <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
-  <a href="https://wa.me/XXXXXXXXXXX" target="_blank" class="contact-btn editable" data-key="contact_whatsapp">Book Appointment</a>
-  <a href="/static/uploads/profile.pdf" download class="contact-btn editable" data-key="contact_pdf">Download Profile</a>
-</section>
+  <!-- Contact Section -->
+  <section class="contact">
+    <h2 class="editable" data-key="contact_title">Contact Me</h2>
+    <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
+    <a href="https://wa.me/9532472334" id="book-appointment" target="_blank" class="editable" data-key="contact_book">Book Appointment</a>
+    <a href="/uploads/profile.pdf" id="download-profile" class="editable" data-key="contact_download">Download Profile</a>
+  </section>
 
-{% endblock %}
+  <!-- Footer -->
+  <footer>
+    <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
+    <p class="editable" data-key="footer_instagram">Instagram @glambylaiba_01</p>
+  </footer>
+
+</body>
+</html>
