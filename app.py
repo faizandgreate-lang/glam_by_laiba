@@ -1,7 +1,7 @@
 # app.py
 import os
 import sqlite3
-from flask import Flask, render_template, request, jsonify, send_from_directory, redirect
+from flask import Flask, render_template, request, jsonify, send_from_directory, redirect, url_for
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
@@ -29,9 +29,21 @@ def index():
 def academy():
     return render_template('a/academy.html')
 
+@app.route('/layout')
+def layout():
+    return render_template('a/layout.html')
+
+@app.route('/page')
+def page():
+    return render_template('a/page.html')
+
+# Catch-all for other pages to avoid 404
 @app.route('/<page>')
 def page_view(page):
-    return render_template(f'a/{page}.html')
+    try:
+        return render_template(f'a/{page}.html')
+    except:
+        return redirect(url_for('index'))
 
 # -------------------------
 # Routes - Studio Mode APIs
@@ -108,4 +120,6 @@ def uploaded_file(filename):
 # Run app
 # -------------------------
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    # Use host=0.0.0.0 for Render, port=PORT environment variable
+    port = int(os.environ.get('PORT', 5001))
+    app.run(debug=True, host='0.0.0.0', port=port)
