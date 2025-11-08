@@ -1,8 +1,9 @@
-/* -----------------------------
-   Core Layout & Typography
------------------------------- */
+/* =========================
+   Glam by Laiba - style.css
+   Main site styling (front-end)
+   ========================= */
 
-/* Reset and basic styles */
+/* ===== Reset & Base ===== */
 * {
   margin: 0;
   padding: 0;
@@ -10,273 +11,324 @@
 }
 
 body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  color: #333;
-  line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
+  color: #222;
   background-color: #fff;
+  overflow-x: hidden;
 }
 
-/* -----------------------------
-   Header & Navigation
------------------------------- */
+img, video {
+  max-width: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* ===== Header & Navigation ===== */
 header {
   position: sticky;
   top: 0;
   width: 100%;
-  z-index: 999;
-  background-color: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-nav {
+.navbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
+  justify-content: space-between;
 }
 
-nav .logo {
-  font-weight: bold;
-  font-size: 20px;
+.navbar h1 {
+  font-size: 1.6rem;
+  color: #ff1493;
+  font-weight: 700;
 }
 
-nav ul {
-  list-style: none;
+.nav-links {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
-nav ul li a {
+.nav-links a {
   text-decoration: none;
-  color: #333;
+  color: #444;
   font-weight: 500;
-  transition: color 0.2s;
+  transition: color 0.3s ease;
 }
 
-nav ul li a:hover {
-  color: #e67e22;
+.nav-links a:hover {
+  color: #ff1493;
 }
 
-/* Navigation buttons for studio editable */
-nav ul li a.editable {
-  cursor: pointer;
-}
-
-/* -----------------------------
-   Hero Section
------------------------------- */
+/* ===== Hero Section ===== */
 .hero {
   position: relative;
-  width: 100%;
-  min-height: 70vh;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: url('/static/img/video-placeholder.png') center/cover no-repeat;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+              url('../img/video-placeholder.png') center/cover no-repeat;
   color: #fff;
-  padding: 60px 20px;
 }
 
-.hero h1 {
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 12px;
+.hero h2 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
 .hero p {
-  font-size: 18px;
-  max-width: 700px;
+  font-size: 1.2rem;
+  max-width: 600px;
 }
 
-/* CTA buttons in hero */
-.hero .cta-button {
-  margin-top: 24px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #e67e22;
+.hero button {
+  margin-top: 18px;
+  background: #ff1493;
   border: none;
-  border-radius: 6px;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 30px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 1rem;
+  transition: 0.3s;
 }
 
-.hero .cta-button:hover {
-  background-color: #d35400;
+.hero button:hover {
+  background: #ff69b4;
 }
 
-/* -----------------------------
-   Portfolio / Gallery Section
------------------------------- */
+/* ===== Portfolio Section ===== */
 .portfolio {
-  padding: 60px 20px;
-  background-color: #f8f8f8;
+  max-width: 1200px;
+  margin: 80px auto;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.portfolio h2 {
+  font-size: 2.2rem;
+  color: #ff1493;
+  margin-bottom: 20px;
+}
+
+.portfolio p {
+  color: #555;
+  margin-bottom: 40px;
+}
+
+.gallery-filter {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.gallery-filter button {
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 8px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.gallery-filter button.active,
+.gallery-filter button:hover {
+  background: #ff1493;
+  color: #fff;
+  border-color: #ff1493;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
 }
 
-.gallery-grid .g-item img {
+.gallery-grid img,
+.gallery-grid video {
   width: 100%;
-  display: block;
-  border-radius: 6px;
+  height: 300px;
+  border-radius: 12px;
   object-fit: cover;
-  transition: transform 0.3s;
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
-.gallery-grid .g-item img:hover {
-  transform: scale(1.05);
+.gallery-grid img:hover,
+.gallery-grid video:hover {
+  transform: scale(1.03);
 }
 
-/* Category filter buttons */
-.portfolio-filters {
+/* ===== Services Section ===== */
+.services {
+  background: #fdf2f8;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.services h2 {
+  color: #ff1493;
+  font-size: 2rem;
+  margin-bottom: 30px;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.service-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+}
+
+.service-card img,
+.service-card video {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.service-card h3 {
+  font-size: 1.3rem;
+  margin: 16px 0 8px;
+  color: #ff1493;
+}
+
+.service-card p {
+  color: #555;
+  font-size: 0.95rem;
+  padding: 0 12px 18px;
+}
+
+/* ===== Contact Section ===== */
+.contact {
+  padding: 70px 20px;
+  text-align: center;
+  background: #fff;
+}
+
+.contact h2 {
+  color: #ff1493;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.contact p {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.contact-buttons {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
 }
 
-.portfolio-filters button {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-}
-
-.portfolio-filters button.active,
-.portfolio-filters button:hover {
-  background-color: #e67e22;
+.contact-buttons a {
+  background: #ff1493;
   color: #fff;
+  text-decoration: none;
+  padding: 10px 22px;
+  border-radius: 30px;
+  transition: 0.3s;
+  font-weight: 500;
 }
 
-/* -----------------------------
-   Services Section
------------------------------- */
-.services {
-  padding: 60px 20px;
+.contact-buttons a:hover {
+  background: #ff69b4;
 }
 
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.services-card {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  text-align: center;
-  transition: transform 0.3s;
-}
-
-.services-card:hover {
-  transform: translateY(-4px);
-}
-
-.services-card img {
-  width: 100%;
-  border-radius: 6px;
-  margin-bottom: 12px;
-}
-
-/* -----------------------------
-   Contact Section
------------------------------- */
-.contact {
-  padding: 60px 20px;
-  background-color: #f1f1f1;
-  text-align: center;
-}
-
-.contact .contact-info {
-  margin-bottom: 24px;
-}
-
-.contact .contact-button {
-  padding: 12px 20px;
-  font-weight: bold;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  margin: 6px;
-  color: #fff;
-}
-
-.contact .whatsapp-button {
-  background-color: #25D366;
-}
-
-.contact .pdf-button {
-  background-color: #3498db;
-}
-
-.contact .contact-button:hover {
-  opacity: 0.9;
-}
-
-/* -----------------------------
-   Footer
------------------------------- */
+/* ===== Footer ===== */
 footer {
-  padding: 24px 20px;
-  text-align: center;
-  background-color: #333;
+  background: #111;
   color: #fff;
-  font-size: 14px;
+  text-align: center;
+  padding: 25px 10px;
+  margin-top: 60px;
+}
+
+footer p {
+  font-size: 0.9rem;
+  color: #ccc;
 }
 
 footer a {
-  color: #e67e22;
+  color: #ff69b4;
   text-decoration: none;
 }
 
-/* -----------------------------
-   Responsive
------------------------------- */
-@media (max-width: 768px) {
-  nav ul {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .hero p {
-    font-size: 16px;
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gallery-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+footer a:hover {
+  text-decoration: underline;
 }
 
-@media (max-width: 480px) {
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
+/* ===== Lightbox (for portfolio) ===== */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
 
-  .hero h1 {
-    font-size: 26px;
-  }
+.lightbox.active {
+  display: flex;
+}
 
+.lightbox img,
+.lightbox video {
+  max-width: 90%;
+  max-height: 80vh;
+  border-radius: 10px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 1.8rem;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 2.2rem;
+  }
   .hero p {
-    font-size: 14px;
+    font-size: 1rem;
+  }
+  .nav-links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
   }
 }
