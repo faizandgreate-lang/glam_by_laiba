@@ -1,52 +1,63 @@
-// studio-mode.js — Inline edit + unlock + reorder + theme switching
+// studio-mode.js — Perfected Inline Edit + Unlock + Reorder + Theme Switching
 (() => {
-  const PWD = '1234'; // uses same server password; server check is used on unlock
+  const PWD = '1234'; // studio password
   const qs = s => document.querySelector(s);
   const qsa = s => Array.from(document.querySelectorAll(s));
+
+  // simple fetch wrapper
   const api = async (url, opts) => {
-    const res = await fetch(url, opts);
-    try { return await res.json(); } catch(e){ return null; }
+    try {
+      const res = await fetch(url, opts);
+      return await res.json();
+    } catch (e) { return null; }
   };
 
-  // apply initial theme if server saved one
+  // apply saved theme or background
   async function applySavedTheme() {
     const cfg = await api('/api/get_settings');
-    if(cfg && cfg.theme_name) {
-      document.body.classList.add(cfg.theme_name);
-    } else if(cfg && cfg.bg_color) {
+    if (cfg && cfg.theme_name) {
+      document.body.className = cfg.theme_name; // overwrite old classes
+    } else if (cfg && cfg.bg_color) {
       document.body.style.background = cfg.bg_color;
     }
   }
 
   // inject unlock button
   function injectUnlock() {
-    if(qs('#edit-unlock-btn')) return;
+    if (qs('#edit-unlock-btn')) return;
     const btn = document.createElement('button');
     btn.id = 'edit-unlock-btn';
     btn.innerText = '🔒 Edit';
     btn.title = 'Enter Studio Mode';
+    Object.assign(btn.style, {
+      position: 'fixed', left: '12px', top: '12px',
+      zIndex: 99999, padding: '6px 10px', borderRadius: '8px',
+      background: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+      cursor: 'pointer'
+    });
     btn.onclick = showPasswordPrompt;
     document.body.appendChild(btn);
   }
 
-  // password prompt
+  // password prompt & verification
   function showPasswordPrompt() {
     const p = prompt('Enter Studio password:');
-    if(!p) return;
-    // verify with server
-    api('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({password:p})})
-      .then(j => {
-        if(j && j.ok) enterStudio(); else alert('Wrong password');
-      }).catch(()=>alert('Network error'));
+    if (!p) return;
+    api('/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({password: p})
+    }).then(j => {
+      if (j && j.ok) enterStudio();
+      else alert('Wrong password');
+    }).catch(() => alert('Network error'));
   }
 
-  // entrance animation + enable editing
+  // enter studio mode
   async function enterStudio() {
-    // animation: add class
     document.documentElement.classList.add('studio-activating');
-    setTimeout(()=>document.documentElement.classList.add('studio-on'), 420);
+    setTimeout(() => document.documentElement.classList.add('studio-on'), 400);
 
-    // init inline editing
     enableInlineEditable();
     initGallerySortable();
     injectThemePicker();
@@ -58,81 +69,101 @@
     location.reload();
   }
 
-  // enable editing for .editable elements
-  function enableInlineEditable(){
-    qsa('.editable').forEach(el=>{
-      el.setAttribute('contenteditable','true');
+  // enable inline editable content
+  function enableInlineEditable() {
+    // text elements
+    qsa('.editable').forEach(el => {
+      el.setAttribute('contenteditable', 'true');
       el.classList.add('studio-editable');
-      el.addEventListener('blur', debounce(async ev=>{
+
+      el.addEventListener('blur', debounce(async () => {
         const key = el.getAttribute('data-key') || el.id || ('text_' + Math.random().toString(36).slice(2,8));
         const value = el.innerHTML;
-        await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({[key]: value})});
+        await api('/api/settings', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({[key]: value})
+        });
         showSavedToast();
       }, 700));
-      // keyboard save on ctrl+s
+
       el.addEventListener('keydown', ev => {
-        if((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 's'){
+        if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 's') {
           ev.preventDefault(); el.blur();
         }
       });
     });
 
-    // images with data-setting can be clicked to upload
+    // images
     qsa('img[data-setting]').forEach(img => {
       img.style.cursor = 'pointer';
       img.title = 'Click to replace image';
       img.addEventListener('click', async () => {
         const file = await pickFile();
-        if(!file) return;
+        if (!file) return;
         const up = await uploadFile(file);
-        if(up && up.ok){
+        if (up && up.ok) {
           img.src = `/uploads/${up.filename}`;
           const key = img.getAttribute('data-setting');
-          await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({[key]: up.filename})});
+          await api('/api/settings', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({[key]: up.filename})
+          });
           showSavedToast();
         } else alert('Upload failed');
       });
     });
 
-    // hero background area if present (data-setting)
+    // hero background
     const hero = qs('[data-setting="hero_bg"]');
-    if(hero){
-      hero.title = 'Click to change hero background';
+    if (hero) {
       hero.style.cursor = 'pointer';
-      hero.addEventListener('click', async ()=>{
-        const file = await pickFile(); if(!file) return;
+      hero.title = 'Click to change hero background';
+      hero.addEventListener('click', async () => {
+        const file = await pickFile(); if (!file) return;
         const up = await uploadFile(file);
-        if(up && up.ok){
+        if (up && up.ok) {
           hero.style.backgroundImage = `url('/uploads/${up.filename}')`;
-          await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'hero_bg': up.filename})});
+          hero.style.backgroundSize = 'cover';
+          hero.style.backgroundPosition = 'center';
+          await api('/api/settings', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({'hero_bg': up.filename})
+          });
           showSavedToast();
         } else alert('Upload failed');
       });
     }
   }
 
-  // gallery reorder using SortableJS for .gallery-grid
-  function initGallerySortable(){
+  // gallery sortable
+  function initGallerySortable() {
     const grid = qs('.gallery-grid, .gallery-strip');
-    if(!grid || !window.Sortable) return;
-    if(grid.sortableInstance) grid.sortableInstance.destroy();
+    if (!grid || !window.Sortable) return;
+    if (grid.sortableInstance) grid.sortableInstance.destroy();
     grid.sortableInstance = Sortable.create(grid, {
       animation: 160,
       handle: '.g-item',
       onEnd: async () => {
-        // gather order of data-id attributes
-        const ids = Array.from(grid.querySelectorAll('.g-item')).map(el => parseInt(el.getAttribute('data-id'))).filter(Boolean);
-        if(ids.length){
-          await api('/api/reorder', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({order: ids})});
+        const ids = Array.from(grid.querySelectorAll('.g-item'))
+          .map(el => parseInt(el.getAttribute('data-id'))).filter(Boolean);
+        if (ids.length) {
+          await api('/api/reorder', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({order: ids})
+          });
           showSavedToast();
         }
       }
     });
   }
 
-  // theme picker (save theme_name to server)
-  function injectThemePicker(){
-    if(qs('#theme-picker')) return;
+  // theme picker
+  function injectThemePicker() {
+    if (qs('#theme-picker')) return;
     const div = document.createElement('div');
     div.id = 'theme-picker';
     div.innerHTML = `
@@ -150,77 +181,108 @@
         <option value="theme10">Theme 10 — Pastel Cards</option>
       </select>
     `;
-    div.style.position='fixed'; div.style.left='12px'; div.style.top='12px'; div.style.zIndex=99999;
-    div.style.background='rgba(255,255,255,0.95)'; div.style.padding='8px'; div.style.borderRadius='8px'; div.style.boxShadow='0 8px 28px rgba(0,0,0,0.12)';
-    document.body.appendChild(div);
-    const sel = qs('#theme-select-inline');
-    // set current theme
-    api('/api/get_settings').then(cfg=>{
-      if(cfg && cfg.theme_name) sel.value = cfg.theme_name;
+    Object.assign(div.style, {
+      position:'fixed', left:'12px', top:'12px', zIndex:99999,
+      background:'rgba(255,255,255,0.95)', padding:'8px',
+      borderRadius:'8px', boxShadow:'0 8px 28px rgba(0,0,0,0.12)'
     });
+    document.body.appendChild(div);
+
+    const sel = qs('#theme-select-inline');
+    api('/api/get_settings').then(cfg => {
+      if (cfg && cfg.theme_name) sel.value = cfg.theme_name;
+    });
+
     sel.onchange = async () => {
       const val = sel.value;
-      // save theme_name
-      await api('/api/settings', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({'theme_name': val})});
-      // apply quickly by reloading page or swapping class
-      location.href = location.pathname; // simple: reload to allow server/template to set correct theme class
+      await api('/api/settings', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({'theme_name': val})
+      });
+      // apply theme immediately
+      document.body.className = val;
+      showSavedToast();
     }
   }
 
-  // small toolbar for uploading gallery quick-add & exit
-  function injectToolbar(){
-    if(qs('#studio-toolbar')) return;
+  // small toolbar
+  function injectToolbar() {
+    if (qs('#studio-toolbar')) return;
     const bar = document.createElement('div');
     bar.id = 'studio-toolbar';
-    bar.style.position='fixed'; bar.style.right='12px'; bar.style.top='12px'; bar.style.zIndex=99999;
-    bar.style.display='flex'; bar.style.gap='8px'; bar.style.background='rgba(255,255,255,0.97)'; bar.style.padding='6px'; bar.style.borderRadius='8px'; bar.style.boxShadow='0 10px 30px rgba(0,0,0,0.12)';
+    Object.assign(bar.style, {
+      position:'fixed', right:'12px', top:'12px', zIndex:99999,
+      display:'flex', gap:'8px',
+      background:'rgba(255,255,255,0.97)', padding:'6px',
+      borderRadius:'8px', boxShadow:'0 10px 30px rgba(0,0,0,0.12)'
+    });
     bar.innerHTML = `<button id="add-media">+ Add Media</button><button id="exit-studio">Exit</button>`;
     document.body.appendChild(bar);
-    qs('#add-media').onclick = async ()=>{
+
+    qs('#add-media').onclick = async () => {
       const f = await pickFile(); if(!f) return;
       const up = await uploadFile(f);
       if(up && up.ok) location.reload(); else alert('Upload failed');
     };
+
     qs('#exit-studio').onclick = exitStudio;
   }
 
-  // file picker
-  function pickFile(){
-    return new Promise(resolve=>{
-      const i = document.createElement('input'); i.type='file'; i.accept='image/*,video/*';
-      i.onchange = ()=> resolve(i.files[0] || null);
+  // pick file
+  function pickFile() {
+    return new Promise(resolve => {
+      const i = document.createElement('input');
+      i.type='file';
+      i.accept='image/*,video/*';
+      i.onchange = ()=>resolve(i.files[0] || null);
       i.click();
     });
   }
 
-  // upload file to /api/upload
-  async function uploadFile(file){
-    const fd = new FormData(); fd.append('file', file); fd.append('category','Studio'); fd.append('ftype', file.type && file.type.startsWith('video') ? 'video' : 'photo');
-    const res = await fetch('/api/upload', {method:'POST', body: fd});
-    try { return await res.json(); } catch(e) { return null; }
+  // upload file
+  async function uploadFile(file) {
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('category','Studio');
+    fd.append('ftype', file.type.startsWith('video') ? 'video' : 'photo');
+    try {
+      const res = await fetch('/api/upload', {method:'POST', body: fd});
+      return await res.json();
+    } catch (e) { return null; }
   }
 
-  function showSavedToast(){
+  // toast
+  function showSavedToast() {
     if(qs('#studio-saved')) {
-      qs('#studio-saved').classList.add('studio-saved-show');
-      setTimeout(()=>qs('#studio-saved').classList.remove('studio-saved-show'), 1000);
+      const t = qs('#studio-saved');
+      t.classList.add('studio-saved-show');
+      setTimeout(()=>t.classList.remove('studio-saved-show'), 1000);
       return;
     }
-    const t = document.createElement('div'); t.id='studio-saved'; t.innerText='Saved'; t.style.position='fixed'; t.style.right='18px'; t.style.bottom='18px';
-    t.style.background='#2ecc71'; t.style.color='#fff'; t.style.padding='8px 12px'; t.style.borderRadius='20px'; t.style.zIndex=99999; document.body.appendChild(t);
-    setTimeout(()=>t.remove(), 1200);
+    const t = document.createElement('div');
+    t.id='studio-saved';
+    t.innerText='Saved';
+    Object.assign(t.style, {
+      position:'fixed', right:'18px', bottom:'18px',
+      background:'#2ecc71', color:'#fff', padding:'8px 12px',
+      borderRadius:'20px', zIndex:99999
+    });
+    document.body.appendChild(t);
+    setTimeout(()=>t.remove(),1200);
   }
 
-  // debounce utility
-  function debounce(fn,wait=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait);} }
+  // debounce
+  function debounce(fn, wait=300){ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); } }
 
   // init
-  document.addEventListener('DOMContentLoaded', async ()=>{
+  document.addEventListener('DOMContentLoaded', async () => {
     await applySavedTheme();
     injectUnlock();
   });
 
-  // expose small functions globally for template buttons
+  // global functions
   window.unlockStudio = showPasswordPrompt;
   window.exitStudioMode = exitStudio;
+
 })();
