@@ -1,113 +1,126 @@
-/* ---- Studio Mode Core ---- */
-.studio-on .studio-editable {
+/* ---- Studio Mode Visuals ---- */
+
+/* Highlight editable elements */
+.studio-editable {
   outline: 2px dashed #3498db;
   outline-offset: 2px;
-  cursor: text;
   transition: outline 0.2s ease-in-out;
 }
 
 .studio-editable:focus {
-  outline: 2px solid #e74c3c;
+  outline: 2px solid #e67e22;
+  outline-offset: 0;
+  background-color: rgba(255,255,255,0.05);
 }
 
+/* Unlock button */
 #edit-unlock-btn {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
 }
 
+/* Theme picker */
+#theme-picker select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+}
+
+/* Toolbar */
 #studio-toolbar button {
+  font-size: 14px;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
-  padding: 6px 12px;
-  border-radius: 6px;
   background-color: #3498db;
-  color: white;
-  font-weight: bold;
-  transition: background 0.2s;
+  color: #fff;
+  transition: all 0.2s ease-in-out;
 }
 
 #studio-toolbar button:hover {
   background-color: #2980b9;
 }
 
-#theme-picker select {
-  padding: 4px 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
+/* Toast notifications */
 #studio-saved {
-  animation: fadeInOut 1.2s ease-in-out forwards;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 600;
   text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease-in-out;
 }
 
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: scale(0.8); }
-  10% { opacity: 1; transform: scale(1.05); }
-  90% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.8); }
+.studio-saved-show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-/* Make gallery items draggable cursor */
+/* Drag & Drop cursor for gallery items */
 .g-item {
-  cursor: move;
-  transition: transform 0.2s ease;
+  cursor: grab;
 }
 
-/* Highlight while dragging */
-.g-item.dragging {
-  opacity: 0.6;
-  transform: scale(1.05);
+.g-item:active {
+  cursor: grabbing;
+  opacity: 0.8;
 }
 
-/* Hero editable area */
-.hero.studio-editable {
-  outline: 2px dashed #9b59b6;
+/* Hero editing hint */
+[data-setting="hero_bg"] {
+  position: relative;
 }
 
-/* Images & videos editable */
-img.studio-editable, video.studio-editable {
-  border: 2px dashed #f39c12;
-  outline-offset: 2px;
-}
-
-/* Studio Mode activating animation */
-.studio-activating body::before {
-  content: "Entering Studio Mode...";
-  position: fixed;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #f1c40f;
+[data-setting="hero_bg"]::after {
+  content: "Click to edit hero background";
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 12px;
   color: #fff;
-  padding: 6px 12px;
+  background: rgba(0,0,0,0.4);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Editable images hint */
+img[data-setting] {
+  border: 2px dashed #e67e22;
+  padding: 2px;
   border-radius: 6px;
-  font-weight: bold;
-  z-index: 999999;
+  transition: transform 0.2s;
 }
 
-/* Theme select / toolbar spacing */
-#studio-toolbar {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  z-index: 99999;
+img[data-setting]:hover {
+  transform: scale(1.02);
 }
 
-/* Mobile responsiveness for toolbar */
+/* Studio activating animation */
+.studio-activating body {
+  transition: all 0.3s ease;
+  filter: brightness(0.95);
+}
+
+/* Studio mode active */
+.studio-on body {
+  outline: none !important;
+}
+
+/* Mobile responsiveness for toolbar and theme picker */
 @media (max-width: 768px) {
-  #studio-toolbar {
+  #studio-toolbar, #theme-picker {
+    left: auto !important;
+    right: 12px !important;
+    top: auto !important;
+    bottom: 12px !important;
     flex-direction: column;
-    top: auto;
-    bottom: 12px;
-    right: 12px;
   }
-  
-  #theme-picker {
-    left: 50%;
-    transform: translateX(-50%);
-    top: 12px;
+  #theme-picker select {
+    width: 140px;
   }
 }
