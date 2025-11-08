@@ -1,199 +1,85 @@
-{% extends "layout.html" %}
-{% block content %}
-<style>
-  body {
-    background-color: {{ bg_color }};
-    font-family: "Poppins", sans-serif;
-    color: #2a2a2a;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glam by Laiba</title>
+  <link id="themeStylesheet" rel="stylesheet" href="/static/themes/theme1.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="/static/js/studio.js" defer></script>
+</head>
+<body>
 
-  section {
-    padding: 60px 8%;
-    text-align: center;
-  }
+  <!-- Header / Navigation -->
+  <header class="nav-header">
+    <nav>
+      <ul>
+        <li class="editable" data-key="btn_home">Home</li>
+        <li class="editable" data-key="btn_portfolio">Portfolio</li>
+        <li class="editable" data-key="btn_services">Services</li>
+        <li class="editable" data-key="btn_contact">Contact</li>
+        <li><a class="editable" data-key="btn_book" href="#" id="book-btn">Book Appointment</a></li>
+        <li><a class="editable" data-key="btn_profile" href="#" id="profile-btn">Download Profile</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  h2, h3 {
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
+  <!-- Hero Section -->
+  <section class="hero-slider" data-setting="hero_bg">
+    <div class="slide editable" data-key="hero_title">Welcome, Laiba 💖</div>
+    <p class="editable" data-key="hero_desc">Your makeup portfolio description here.</p>
+    <video class="editable" data-setting="hero_video" autoplay muted loop playsinline></video>
+  </section>
 
-  .hero {
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,192,203,0.3));
-    padding: 120px 8%;
-  }
-
-  .hero h2 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #d63384;
-  }
-
-  .hero p {
-    font-size: 1.1rem;
-    margin-top: 10px;
-    color: #444;
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-top: 30px;
-  }
-
-  .card img, .card video {
-    width: 100%;
-    border-radius: 10px;
-    object-fit: cover;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  }
-
-  .prices-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-    margin-top: 40px;
-  }
-
-  .price-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    padding: 25px;
-    width: 280px;
-    transition: all 0.3s ease;
-  }
-
-  .price-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .price-row {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-    font-size: 1rem;
-  }
-
-  .reviews {
-    margin-top: 50px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-  }
-
-  .review {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-    text-align: left;
-  }
-
-  .review img {
-    width: 100%;
-    border-radius: 10px;
-    margin-bottom: 15px;
-  }
-
-  .contact-section a {
-    color: #d63384;
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .contact-section a:hover {
-    text-decoration: underline;
-  }
-
-  footer {
-    text-align: center;
-    padding: 30px 0;
-    color: #666;
-  }
-</style>
-
-<!-- 🌸 Common Gallery Header (on every page) -->
-<section class="gallery-top">
-  <h3>✨ Our Work ✨</h3>
-  <div class="cards">
-    {% for g in gallery %}
-      <div class="card">
-        {% if g['type']=='video' %}
-          <video controls preload="none" src="/uploads/{{ g['filename'] }}"></video>
-        {% else %}
-          <img src="/uploads/{{ g['filename'] }}" alt="">
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-</section>
-
-{% if page=='home' %}
-<section class="hero">
-  <div class="hero-content">
-    <h2>{{ site_title }}</h2>
-    <p>{{ tagline }}</p>
-    <div id="home-desc" class="rich-text">
-      {{ (settings.get('home_desc')|safe) if settings and settings.get('home_desc') else "<p>Edit this section from Admin.</p>" }}
+  <!-- Portfolio Section -->
+  <section class="portfolio">
+    <h2 class="editable" data-key="portfolio_title">Our Portfolio</h2>
+    <div class="portfolio-filters">
+      <button class="filter-btn editable" data-key="filter_all">All</button>
+      <button class="filter-btn editable" data-key="filter_bridal">Bridal</button>
+      <button class="filter-btn editable" data-key="filter_party">Party</button>
+      <button class="filter-btn editable" data-key="filter_other">Other</button>
     </div>
-  </div>
-</section>
-{% endif %}
+    <div class="gallery-grid">
+      <!-- Sample items -->
+      <div class="g-item" data-id="1"><img data-setting="portfolio_1" src="/static/img/video-placeholder.png" alt="Portfolio"></div>
+      <div class="g-item" data-id="2"><img data-setting="portfolio_2" src="/static/img/video-placeholder.png" alt="Portfolio"></div>
+    </div>
+  </section>
 
-{% if page=='portfolio' %}
-<section class="portfolio-full">
-  <h2>Our Portfolio</h2>
-  <div id="portfolio-desc" class="rich-text">
-    {{ (settings.get('portfolio_desc')|safe) if settings and settings.get('portfolio_desc') else "<p>Edit portfolio description from Admin.</p>" }}
-  </div>
-</section>
-{% endif %}
-
-{% if page=='prices' %}
-<section class="prices-section">
-  <h2>Our Packages</h2>
-  <div id="prices-desc" class="rich-text">
-    {{ (settings.get('prices_desc')|safe) if settings and settings.get('prices_desc') else "<p>Update service descriptions from Admin.</p>" }}
-  </div>
-
-  <div class="prices-grid">
-    {% for cat, items in prices.items() %}
-      <div class="price-card">
-        <h3>{{ cat }}</h3>
-        {% for k,v in items.items() %}
-          <div class="price-row"><span>{{ k }}</span><span>{{ v }}</span></div>
-        {% endfor %}
+  <!-- Services Section -->
+  <section class="services">
+    <h2 class="editable" data-key="services_title">Our Services</h2>
+    <div class="services-grid">
+      <div class="service-card editable" data-key="service_1">
+        <img data-setting="service_1_img" src="/static/img/video-placeholder.png" alt="Service">
+        <h3 class="editable" data-key="service_1_title">Makeup</h3>
+        <p class="editable" data-key="service_1_desc">Bridal & Party makeup services.</p>
       </div>
-    {% endfor %}
-  </div>
+    </div>
+  </section>
 
-  <h3 style="margin-top:60px;">Client Reviews</h3>
-  <div class="reviews">
-    {% for r in reviews %}
-      <div class="review">
-        {% if r['image'] %}
-          <img src="/uploads/{{ r['image'] }}" alt="">
-        {% endif %}
-        <strong>{{ r['name'] }}</strong>
-        <p>{{ r['text'] }}</p>
-      </div>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
+  <!-- Contact Section -->
+  <section class="contact">
+    <h2 class="editable" data-key="contact_title">Contact Me</h2>
+    <p class="editable" data-key="contact_info">📞 9532472334 | 📧 workwithlaiba24@gmail.com</p>
+    <a class="editable" data-key="whatsapp_btn" href="#" id="whatsapp-btn">Book Appointment</a>
+    <a class="editable" data-key="profile_download" href="#" id="download-btn">Download Profile</a>
+  </section>
 
-{% if page=='contact' %}
-<section class="contact-section">
-  <h2>Contact Us</h2>
-  <p>📞 Call/WhatsApp: <strong>9532472334</strong></p>
-  <p>📧 Email: <a href="mailto:workwithlaiba24@gmail.com">workwithlaiba24@gmail.com</a></p>
-  <p>📸 Instagram: <a href="https://www.instagram.com/glambylaiba_01" target="_blank">@glambylaiba_01</a></p>
-</section>
-{% endif %}
+  <!-- Footer -->
+  <footer>
+    <p class="editable" data-key="footer_text">COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖</p>
+    <p class="editable" data-key="footer_instagram">Instagram @glambylaiba_01</p>
+  </footer>
 
-<footer>
-  COPYRIGHT © 2025 GLAMBYLAIBA.COM • Designed with 💖
-</footer>
-{% endblock %}
+  <script>
+    // WhatsApp booking link (replace number later)
+    document.getElementById('whatsapp-btn').href = "https://wa.me/your-number?text=Hi%20Laiba,%20I%20want%20to%20book%20an%20appointment";
+
+    // Profile PDF download link (replace file later)
+    document.getElementById('download-btn').href = "/static/uploads/profile.pdf";
+  </script>
+
+</body>
+</html>
